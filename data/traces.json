@@ -1,7 +1,7 @@
 {
   "traces": [
     {
-      "name": "la_paquelais___au_sec___chemins_larges",
+      "name": "au_sec___9km___chemins_larges___la_paquelais",
       "category": "sec",
       "coordinates": [
         {
@@ -11455,8 +11455,8 @@
       ]
     },
     {
-      "name": "randonn_e_en_boucle_l_hiver_le_long_de_la_boucle_de_la_paquelais_via_valais_le_1er_d_cembre_2024",
-      "category": "unknown",
+      "name": "boueux_mais_ok_8km_la_paquelais_valais_bouvardiere",
+      "category": "boueux",
       "coordinates": [
         {
           "lat": 47.331283,
