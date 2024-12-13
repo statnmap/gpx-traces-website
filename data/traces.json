@@ -2,6 +2,7 @@
   "traces": [
     {
       "name": "Au sec - 9km - chemins larges - La Paquelais",
+      "sanitizedName": "au_sec___9km___chemins_larges___la_paquelais",
       "category": "sec",
       "coordinates": [
         {
@@ -11456,6 +11457,7 @@
     },
     {
       "name": "boueux-mais-ok_8km_La-Paquelais_Valais_Bouvardiere",
+      "sanitizedName": "boueux_mais_ok_8km_la_paquelais_valais_bouvardiere",
       "category": "boueux",
       "coordinates": [
         {
