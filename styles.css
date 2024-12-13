@@ -41,3 +41,8 @@ main {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* Touch-specific styles for better touch accuracy */
+.leaflet-interactive {
+  padding: 10px;
+}
