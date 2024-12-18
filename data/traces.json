@@ -82475,7 +82475,7 @@
     {
       "name": "Chemin inondable - Fremière",
       "sanitizedName": "chemin_inondable___fremi_re",
-      "category": "autres",
+      "category": "chemin_inondable",
       "coordinates": [
         {
           "lat": 47.336784,
@@ -82506,7 +82506,7 @@
     {
       "name": "Chemin inondable - La Roche à La Babinière",
       "sanitizedName": "chemin_inondable___la_roche___la_babini_re",
-      "category": "autres",
+      "category": "chemin_inondable",
       "coordinates": [
         {
           "lat": 47.300275,
@@ -82783,7 +82783,7 @@
     {
       "name": "Chemin boueux - Rivière du Moulin à Valais",
       "sanitizedName": "chemin_boueux___rivi_re_du_moulin___valais",
-      "category": "autres",
+      "category": "chemin_boueux",
       "coordinates": [
         {
           "lat": 47.325516,
