@@ -46,3 +46,10 @@ main {
 .leaflet-interactive {
   padding: 10px;
 }
+
+/* Media query for smaller screens */
+@media (max-width: 600px) {
+  #filters {
+    flex-wrap: wrap;
+  }
+}
