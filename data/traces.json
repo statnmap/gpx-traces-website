@@ -2,7 +2,7 @@
   "traces": [
     {
       "name": "Parcours plutôt sec, boueux après pluie à la Valiniere - 9km - La Roche via La Biliais Deniaud, La Freuzière",
-      "sanitizedName": "parcours_plut_t_sec__boueux_apr_s_pluie___la_valiniere___9km___la_roche_via_la_biliais_deniaud__la_freuzi_re",
+      "sanitizedName": "parcours_plutot_sec__boueux_apres_pluie_a_la_valiniere___9km___la_roche_via_la_biliais_deniaud__la_freuziere",
       "category": "parcours",
       "coordinates": [
         {
@@ -11409,7 +11409,7 @@
     },
     {
       "name": "Parcours un peu gras au retour automne hiver - 9km - parcours du Trail réduit",
-      "sanitizedName": "parcours_un_peu_gras_au_retour_automne_hiver___9km___parcours_du_trail_r_duit",
+      "sanitizedName": "parcours_un_peu_gras_au_retour_automne_hiver___9km___parcours_du_trail_reduit",
       "category": "parcours",
       "coordinates": [
         {
@@ -23048,7 +23048,7 @@
     },
     {
       "name": "Parcours pied dans l'eau en automne - 9km - boucle du moulin - Fremière",
-      "sanitizedName": "parcours_pied_dans_l_eau_en_automne___9km___boucle_du_moulin___fremi_re",
+      "sanitizedName": "parcours_pied_dans_l_eau_en_automne___9km___boucle_du_moulin___fremiere",
       "category": "parcours",
       "coordinates": [
         {
@@ -46486,7 +46486,7 @@
     },
     {
       "name": "Parcours sec - 9km - La Haymonnière, La Roche et La Babinière",
-      "sanitizedName": "parcours_sec___9km___la_haymonni_re__la_roche_et_la_babini_re",
+      "sanitizedName": "parcours_sec___9km___la_haymonniere__la_roche_et_la_babiniere",
       "category": "parcours",
       "coordinates": [
         {
@@ -82474,7 +82474,7 @@
     },
     {
       "name": "Chemin inondable - Fremière",
-      "sanitizedName": "chemin_inondable___fremi_re",
+      "sanitizedName": "chemin_inondable___fremiere",
       "category": "chemin_inondable",
       "coordinates": [
         {
@@ -82505,7 +82505,7 @@
     },
     {
       "name": "Chemin inondable - La Roche à La Babinière",
-      "sanitizedName": "chemin_inondable___la_roche___la_babini_re",
+      "sanitizedName": "chemin_inondable___la_roche_a_la_babiniere",
       "category": "chemin_inondable",
       "coordinates": [
         {
@@ -82548,7 +82548,7 @@
     },
     {
       "name": "Route danger - La Roche à Bonhaund",
-      "sanitizedName": "route_danger___la_roche___bonhaund",
+      "sanitizedName": "route_danger___la_roche_a_bonhaund",
       "category": "danger",
       "coordinates": [
         {
@@ -82731,7 +82731,7 @@
     },
     {
       "name": "chemin boueux - La Pinelière",
-      "sanitizedName": "chemin_boueux___la_pineli_re",
+      "sanitizedName": "chemin_boueux___la_pineliere",
       "category": "chemin_boueux",
       "coordinates": [
         {
@@ -82782,7 +82782,7 @@
     },
     {
       "name": "Chemin boueux - Rivière du Moulin à Valais",
-      "sanitizedName": "chemin_boueux___rivi_re_du_moulin___valais",
+      "sanitizedName": "chemin_boueux___riviere_du_moulin_a_valais",
       "category": "chemin_boueux",
       "coordinates": [
         {
