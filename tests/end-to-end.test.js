@@ -9,7 +9,7 @@ const path = require('path');
 const { google } = require('googleapis');
 
 describe('End-to-end filename processing', () => {
-  const gpxFilesDir = path.join(__dirname, '../gpx-files');
+  const gpxFilesDir = path.join(__dirname, '../gpx-files-end-to-end');
   const outputFilePath = path.join(__dirname, '../data/traces.json');
 
   afterAll(() => {
@@ -25,7 +25,7 @@ describe('End-to-end filename processing', () => {
   test('sanitizes, categorizes, processes, and displays the filename correctly', async () => {
 
     // Process GPX files
-    await processGpxFiles();
+    await processGpxFiles(gpxFilesDir);
 
     // Check the sanitized file names
     const sanitizedFileName0 = 'chemin_boueux___la_valiniere.gpx';

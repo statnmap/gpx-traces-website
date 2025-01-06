@@ -44,7 +44,7 @@ describe('getCoordinates', () => {
 });
 
 describe('Google Drive integration', () => {
-  const gpxFilesDir = path.join(__dirname, '../gpx-files');
+  const gpxFilesDir = path.join(__dirname, '../gpx-files-process');
   const outputFilePath = path.join(__dirname, '../data/traces.json');
 
   afterAll(() => {
@@ -59,7 +59,7 @@ describe('Google Drive integration', () => {
 
   test('downloads and processes GPX files from Google Drive', async () => {
     // Process GPX files
-    await processGpxFiles();
+    await processGpxFiles(gpxFilesDir);
 
     // Check the traces.json file
     expect(fs.existsSync(outputFilePath)).toBe(true);

@@ -5,7 +5,6 @@ const { google } = require('googleapis');
 const { sanitizeFileName } = require('./sanitize-gpx');
 
 const outputFilePath = path.join(__dirname, '../data/traces.json');
-const gpxFilesDir = path.join(__dirname, '../gpx-files');
 
 const categories = ['parcours', 'chemin_boueux', 'chemin_inondable', 'danger'];
 
@@ -30,7 +29,7 @@ async function listGpxFiles() {
   return res.data.files;
 }
 
-async function downloadGpxFile(fileId, fileName) {
+async function downloadGpxFile(fileId, fileName, gpxFilesDir) {
   console.log('Starting downloadGpxFile:', fileName);
   const res = await drive.files.get({
     fileId: fileId,
@@ -45,7 +44,7 @@ async function downloadGpxFile(fileId, fileName) {
     res.data.on('end', () => {
       const sanitizedFileName = sanitizeFileName(path.basename(fileName, '.gpx')) + '.gpx';
       const filePath = path.join(gpxFilesDir, sanitizedFileName);
-      ensureGpxFilesDirectoryExists();
+      ensureGpxFilesDirectoryExists(gpxFilesDir);
       fs.writeFileSync(filePath, data);
       resolve(filePath);
     });
@@ -55,13 +54,13 @@ async function downloadGpxFile(fileId, fileName) {
   });
 }
 
-async function processGpxFiles() {
+async function processGpxFiles(gpxFilesDir) {
   console.log('Starting processGpxFile function');
   const traces = [];
   const files = await listGpxFiles();
 
   // Clean content of gpx-files directory before downloading
-  cleanGpxFilesDirectory();
+  cleanGpxFilesDirectory(gpxFilesDir);
 
   // Delete the existing traces.json file if it exists
   if (fs.existsSync(outputFilePath)) {
@@ -71,7 +70,7 @@ async function processGpxFiles() {
 
   for (const file of files) {
     try {
-      const filePath = await downloadGpxFile(file.id, file.name);
+      const filePath = await downloadGpxFile(file.id, file.name, gpxFilesDir);
       const gpxData = fs.readFileSync(filePath, 'utf8');
       const sanitizedFileName = sanitizeFileName(path.basename(file.name, '.gpx')) + '.gpx';
 
@@ -166,13 +165,13 @@ function ensureDataDirectoryExists() {
   }
 }
 
-function ensureGpxFilesDirectoryExists() {
+function ensureGpxFilesDirectoryExists(gpxFilesDir) {
   if (!fs.existsSync(gpxFilesDir)) {
     fs.mkdirSync(gpxFilesDir);
   }
 }
 
-function cleanGpxFilesDirectory() {
+function cleanGpxFilesDirectory(gpxFilesDir) {
   if (fs.existsSync(gpxFilesDir)) {
     fs.readdirSync(gpxFilesDir).forEach((file) => {
       const filePath = path.join(gpxFilesDir, file);
