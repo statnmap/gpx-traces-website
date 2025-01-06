@@ -27,7 +27,7 @@ describe('End-to-end filename processing', () => {
     }
   });
 
-  test('sanitizes, categorizes, processes, and displays the filename correctly', async (done) => {
+  test('sanitizes, categorizes, processes, and displays the filename correctly', async () => {
     // Check the sanitized file names
     const sanitizedFileName0 = 'chemin_boueux___la_valiniere.gpx';
     const sanitizedFileName1 = 'sample_track.gpx';
@@ -56,7 +56,5 @@ describe('End-to-end filename processing', () => {
       { lat: 47.325, lon: -1.736 },
       { lat: 47.326, lon: -1.737 }
     ]);
-
-    done();
   });
 });
