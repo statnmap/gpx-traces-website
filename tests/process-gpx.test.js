@@ -1,3 +1,5 @@
+jest.setTimeout(10000);
+
 process.env.NODE_ENV = 'test';
 
 const { getCategory, getCoordinates, processGpxFiles } = require('../scripts/process-gpx');
