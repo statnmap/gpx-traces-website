@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test';
 
-const { getColor, getWeight } = require('../scripts/map');
+const { getColor, getWeight } = require('../scripts/map-utils');
 const fs = require('fs');
 const path = require('path');
 
@@ -47,4 +47,3 @@ describe('getWeight', () => {
     expect(getWeight('autres')).toBe(8);
   });
 });
-
