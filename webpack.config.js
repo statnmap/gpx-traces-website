@@ -1,5 +1,10 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const gpxFilesDir = process.env.GPX_FILES_DIR || 'gpx-files-real-data';
 
 module.exports = {
   entry: './scripts/map.js',
@@ -32,7 +37,7 @@ module.exports = {
         { from: 'index.html', to: 'index.html' },
         { from: 'styles.css', to: 'styles.css' },
         { from: 'data/traces.json', to: 'data/traces.json' },
-        { from: 'gpx-files', to: 'gpx-files' }
+        { from: gpxFilesDir, to: gpxFilesDir }
       ]
     })
   ],
