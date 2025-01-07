@@ -2,6 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
 dotenv.config();
 
@@ -43,9 +44,16 @@ module.exports = {
       ]
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env)
+      'process.env': JSON.stringify({
+        GPX_FILES_DIR: process.env.GPX_FILES_DIR,
+        TRACES_FILE_PATH: process.env.TRACES_FILE_PATH
+      })
     })
   ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
+  },
   resolve: {
     fallback: {
       stream: false,
