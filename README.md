@@ -4,9 +4,30 @@
 [![codecov](https://codecov.io/gh/statnmap/gpx-traces-website/graph/badge.svg?token=W4PKFFU3EN)](https://codecov.io/gh/statnmap/gpx-traces-website)
 ![License](https://img.shields.io/github/license/statnmap/gpx-traces-website)
 
-
-
 This repository contains the necessary code to process GPX files stored in a Google Drive folder as input and show the GPX traces on an interactive map.
+
+## Categories
+
+When you upload your GPX file in the Google Drive, you need to properly name it, so that it is correctly colored on the website.
+
+Indeed, the GPX traces are categorized into five categories:
+
+- `parcours`: Files starting with "Parcours"
+- `chemin_boueux`: Files containing "chemin" and "boueux"
+- `chemin_inondable`: Files containing "chemin" and "inondable"
+- `danger`: Files containing "danger"
+- `autres`: Other files
+
+The category is determined based on the GPX file name. Ensure the file name includes the category to map it correctly.
+
+To add new categories, modify the `getCategory` function in the `scripts/process-gpx.js` file.
+To update the effect of new categories on color and weight, modify the `getColor` and `getWeight` functions in the `scripts/map.js` file.
+Also, do not forget to add it to the box selection in index.html if needed
+
+## Documentation
+
+The documentation for the codebase can be found under the `docs/` directory in the generated website: https://statnmap.github.io/gpx-traces-website/docs/
+The documentation is generated using JSDoc.
 
 ## Directory Structure
 
@@ -14,11 +35,6 @@ This repository contains the necessary code to process GPX files stored in a Goo
 - `tests/`: Directory to store unit tests.
 - `test-gpx-files/`: Directory to store GPX files to be used for unit tests.
 - `.github/workflows/`: Directory to store GitHub Actions workflows.
-
-## Documentation
-
-The documentation for the codebase can be found under the `docs/` directory in the generated website: https://statnmap.github.io/gpx-traces-website/docs/
-The documentation is generated using JSDoc.
 
 ## Creating the GOOGLE_DRIVE_CREDENTIALS Secret
 
@@ -31,10 +47,6 @@ To create the `GOOGLE_DRIVE_CREDENTIALS` secret in your GitHub repository, follo
 5. In the "Name" field, enter `GOOGLE_DRIVE_CREDENTIALS`.
 6. In the "Value" field, paste the content of your `credentials.json` file.
 7. Click on the "Add secret" button.
-
-This will create the `GOOGLE_DRIVE_CREDENTIALS` secret in your repository, which will be used by the GitHub Actions workflows to authenticate with Google Drive.
-
-## How to create the content of the credentials.json ?
 
 To create the content of the `credentials.json` file, follow these steps:
 
@@ -116,27 +128,9 @@ To add a new GPX file, follow these steps:
    node scripts/process-gpx.js
    ```
 
-## Categories
-
-The GPX traces are categorized into five categories:
-
-- `parcours`: Files starting with "Parcours"
-- `chemin_boueux`: Files containing "chemin" and "boueux"
-- `chemin_inondable`: Files containing "chemin" and "inondable"
-- `danger`: Files containing "danger"
-- `autres`: Other files
-
-The category is determined based on the GPX file name. Ensure the file name includes the category to map it correctly.
-
-To update the categories, modify the `getCategory` function in the `scripts/process-gpx.js` file.
-
-To update the effect of new categories on color and weight, modify the `getColor` and `getWeight` functions in the `scripts/map.js` file.
-
-## GitHub Actions
+## GitHub Actions and Deployment
 
 The repository is configured to use GitHub Actions to build and deploy the website. The pre-build script is included in the build process to process the GPX files and update the JSON file whenever new GPX files are added or existing ones are modified.
-
-## Deployment
 
 The static website is hosted on GitHub Pages. The repository is configured to automatically build and deploy the website using GitHub Actions whenever changes are made to the GPX files or the codebase.
 
