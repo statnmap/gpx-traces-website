@@ -269,3 +269,7 @@ To achieve this, the `simplifyCoordinates` function was added to the `scripts/pr
 The `getCoordinates` function in the `scripts/process-gpx.js` file was updated to use the `simplifyCoordinates` function.
 
 Unit tests were added in the `tests/process-gpx.test.js` file to verify the simplification logic.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
