@@ -33,12 +33,6 @@ const { google } = require('googleapis');
 const { sanitizeFileName } = require('./sanitize-gpx');
 
 /**
- * The path to the output file where the processed traces will be saved.
- * @type {string}
- */
-const outputFilePath = path.join(__dirname, '../data/traces.json');
-
-/**
  * The list of categories for the GPX traces.
  * @type {string[]}
  */
@@ -112,9 +106,10 @@ async function downloadGpxFile(fileId, fileName, gpxFilesDir) {
 /**
  * Processes the GPX files in the specified directory and generates a JSON file with the trace data.
  * @param {string} gpxFilesDir - The directory containing the GPX files to process.
+ * @param {string} tracesFilePath - The path to the output file where the processed traces will be saved.
  * @returns {Promise&lt;void>} A promise that resolves when the processing is complete.
  */
-async function processGpxFiles(gpxFilesDir) {
+async function processGpxFiles(gpxFilesDir, tracesFilePath) {
   console.log('Starting processGpxFile function');
   const traces = [];
   const files = await listGpxFiles();
@@ -123,8 +118,8 @@ async function processGpxFiles(gpxFilesDir) {
   cleanGpxFilesDirectory(gpxFilesDir);
 
   // Delete the existing traces.json file if it exists
-  if (fs.existsSync(outputFilePath)) {
-    fs.unlinkSync(outputFilePath);
+  if (fs.existsSync(tracesFilePath)) {
+    fs.unlinkSync(tracesFilePath);
     console.log('Deleted existing traces.json file');
   }
 
@@ -156,7 +151,7 @@ async function processGpxFiles(gpxFilesDir) {
   }
 
   try {
-    await writeTracesJson(traces);
+    await writeTracesJson(traces, tracesFilePath);
   } catch (error) {
     console.error('Error writing traces.json:', error);
     throw error;
@@ -177,16 +172,17 @@ async function processGpxFiles(gpxFilesDir) {
 /**
  * Writes the processed trace data to a JSON file.
  * @param {Object[]} traces - The array of trace objects to write.
+ * @param {string} tracesFilePath - The path to the output file where the processed traces will be saved.
  * @returns {Promise&lt;void>} A promise that resolves when the writing is complete.
  */
-async function writeTracesJson(traces) {
-  ensureDataDirectoryExists();
+async function writeTracesJson(traces, tracesFilePath) {
+  ensureDataDirectoryExists(tracesFilePath);
     if (process.env.NODE_ENV === 'test') {
       console.log('traces content before JSON', traces)
     }
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(outputFilePath, JSON.stringify({ traces }, null, 2), (err) => {
+    fs.writeFile(tracesFilePath, JSON.stringify({ traces }, null, 2), (err) => {
       if (err) {
         reject(err);
       } else {
@@ -235,9 +231,10 @@ function getCoordinates(trkpts) {
 
 /**
  * Ensures that the data directory exists, creating it if necessary.
+ * @param {string} tracesFilePath - The path to the output file where the processed traces will be saved.
  */
-function ensureDataDirectoryExists() {
-  const dataDir = path.join(__dirname, '../data');
+function ensureDataDirectoryExists(tracesFilePath) {
+  const dataDir = path.dirname(tracesFilePath);
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir);
   }
@@ -281,13 +278,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#outputFilePath">outputFilePath</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 07 2025 10:20:09 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 07 2025 11:08:39 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
