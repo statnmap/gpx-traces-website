@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx version="1.1" creator="outdooractive - http://www.outdooractive.com" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:oa="http://www.outdooractive.com/GPX/Extensions/1">
+  <metadata>
+    <name>chemin inondé - la Valiniere</name>
+    <author>
+      <name>Seb R - Communauté</name>
+    </author>
+    <link href="https://www.outdooractive.com/r/306858939"/>
+    <time>2024-12-18T09:52:26.783Z</time>
+    <extensions>
+      <oa:oaCategory>hikingTourTrail</oa:oaCategory>
+    </extensions>
+  </metadata>
+  <trk>
+    <name>chemin inondé - la Valiniere</name>
+    <type>hikingTourTrail</type>
+    <trkseg>
+      <trkpt lat="47.326126" lon="-1.756171">
+        <ele>68.7</ele>
+        <name>Impasse de la Valini��re, Vigneux-de-Bretagne</name>
+        <extensions>
+          <oa:locType>routingNode</oa:locType>
+          <oa:address>{
+  &quot;title&quot; : &quot;Impasse de la Valinière, Vigneux-de-Bretagne&quot;
+}</oa:address>
+        </extensions>
+      </trkpt>
+      <trkpt lat="47.326115" lon="-1.756125">
+        <ele>69.0</ele>
+      </trkpt>
+      <trkpt lat="47.326097" lon="-1.755959">
+        <ele>69.7</ele>
+      </trkpt>
+      <trkpt lat="47.325889" lon="-1.755774">
+        <ele>72.0</ele>
+      </trkpt>
+      <trkpt lat="47.325556" lon="-1.755519">
+        <ele>75.1</ele>
+      </trkpt>
+      <trkpt lat="47.325227" lon="-1.755216">
+        <ele>76.2</ele>
+      </trkpt>
+      <trkpt lat="47.32505" lon="-1.75487">
+        <ele>76.8</ele>
+      </trkpt>
+      <trkpt lat="47.324944" lon="-1.75429">
+        <ele>77.2</ele>
+      </trkpt>
+      <trkpt lat="47.324856" lon="-1.754052">
+        <ele>77.2</ele>
+      </trkpt>
+      <trkpt lat="47.324827" lon="-1.754013">
+        <ele>77.3</ele>
+        <name>Impasse de la Valinière, Vigneux-de-Bretagne</name>
+        <extensions>
+          <oa:locType>routingNode</oa:locType>
+          <oa:address>{
+  &quot;title&quot; : &quot;Impasse de la Valinière, Vigneux-de-Bretagne&quot;
+}</oa:address>
+        </extensions>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
