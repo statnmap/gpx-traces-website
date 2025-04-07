@@ -17,7 +17,7 @@
     <trkseg>
       <trkpt lat="47.33191" lon="-1.748454">
         <ele>60.0</ele>
-        <name>Château de la Bretonnière, Vigneux-de-Bretagne</name>
+        <name>Ch��teau de la Bretonnière, Vigneux-de-Bretagne</name>
         <extensions>
           <oa:locType>routingNode</oa:locType>
           <oa:address>{
