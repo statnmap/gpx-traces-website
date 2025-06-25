@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  release:
-    types: [published]
   schedule:
     - cron: '0 9 * * 1'
 
