@@ -40,12 +40,12 @@ jobs:
 
       - name: Run unit tests
         id: tests
-        run: npm test
+        run: node --experimental-vm-modules node_modules/.bin/jest
         continue-on-error: ${{ github.event_name == 'schedule' }}
 
       - name: Check code coverage
         if: success() || github.event_name == 'schedule'
-        run: npm run test:coverage
+        run: node --experimental-vm-modules node_modules/.bin/jest --coverage
         continue-on-error: ${{ github.event_name == 'schedule' }}
 
       - name: Upload coverage report to CODECOV
@@ -77,7 +77,7 @@ jobs:
 
       - name: Generate documentation in dist/docs folder
         if: success() || github.event_name == 'schedule'
-        run: npm run generate-docs
+        run: node --experimental-vm-modules node_modules/.bin/jsdoc -c jsdoc.json
 
       - name: Fetch last tagged version if tests failed
         id: fetch_last_tag
