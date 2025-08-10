@@ -238,6 +238,21 @@ npm run lint
 npm run format
 ```
 
+## GitHub Copilot Workflow Guide
+
+This project has a standardized GitHub Copilot workflow guide that defines best practices for using AI assistance in development. The guide helps ensure consistency, quality, and thoroughness when working with Copilot.
+
+The workflow guide covers:
+- Analysis Phase: Problem understanding and solution planning
+- Implementation Phase: Code writing and modification best practices
+- Verification Phase: Testing and quality assurance procedures
+- Finalization Phase: Documentation and preparation for commit
+- Pre-Commit Checklist: Steps to follow before finalizing changes
+
+To use the guide, simply tell Copilot: "Please follow our Copilot Workflow Guide when responding" at the beginning of a conversation. Copilot: "Please follow our Copilot Workflow Guide when responding" at the beginning of a conversation.
+
+For complete details, see the [Copilot Workflow Guide](docs/copilot-workflow-guide.md).
+
 ## JavaScript Transpilation
 
 The project uses Babel for JavaScript transpilation. Babel allows the use of modern JavaScript features by converting the code into a compatible version that can run in older browsers.
