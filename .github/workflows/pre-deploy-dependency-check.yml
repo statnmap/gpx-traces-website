@@ -1,0 +1,46 @@
+name: Pre-Deployment Dependency Check
+
+on:
+  schedule:
+    # Run at 6:00 AM on Monday, 3 hours before deployment
+    - cron: '0 6 * * 1'
+  workflow_dispatch:  # Allow manual triggering if needed
+
+jobs:
+  check-and-merge-dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: List and merge open Dependabot PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for open Dependabot PRs..."
+          
+          # Get all open PRs from Dependabot
+          PR_LIST=$(gh pr list --author "dependabot[bot]" --json number,title,state --state open)
+          
+          if [ "$(echo $PR_LIST | jq length)" -gt 0 ]; then
+            echo "Found open Dependabot PRs:"
+            echo "$PR_LIST" | jq
+            
+            # Loop through each PR and merge it
+            for PR_NUM in $(echo "$PR_LIST" | jq -r '.[].number'); do
+              echo "Merging PR #$PR_NUM..."
+              gh pr merge $PR_NUM --squash --auto
+            done
+          else
+            echo "No open Dependabot PRs found."
+          fi
+      
+      - name: Check for dependency issues
+        run: npm audit || echo "Dependency issues found but continuing..."
