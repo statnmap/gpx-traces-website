@@ -16,5 +16,8 @@ updates:
       - "automerge"
     # Allow up to 10 open pull requests for npm dependencies
     open-pull-requests-limit: 10
-    # Specify security updates separately
-    security-updates-only: false
+    # Configure update preferences
+    ignore:
+      # Ignore patch updates by default - focus on minor and major updates
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
