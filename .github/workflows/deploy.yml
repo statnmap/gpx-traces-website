@@ -69,7 +69,7 @@ jobs:
 
       - name: Run pre-build script
         if: success() || github.event_name == 'schedule'
-        run: node scripts/run-process-gpx.js
+        run: node --experimental-vm-modules scripts/run-process-gpx.js
 
       - name: Build website
         if: success() || github.event_name == 'schedule'
@@ -90,7 +90,7 @@ jobs:
           echo "last_tag=$LAST_TAG" >> $GITHUB_OUTPUT
           # Re-run build process with the stable version
           npm install
-          node scripts/run-process-gpx.js
+          node --experimental-vm-modules scripts/run-process-gpx.js
           npm run build
           npm run generate-docs
 

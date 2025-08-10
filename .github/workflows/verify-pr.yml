@@ -48,7 +48,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Run pre-build script
-        run: node scripts/run-process-gpx.js
+        run: node --experimental-vm-modules scripts/run-process-gpx.js
 
       - name: Build website
         run: npm run build
