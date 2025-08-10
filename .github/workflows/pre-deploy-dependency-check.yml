@@ -22,7 +22,7 @@ jobs:
 
       - name: List and merge open Dependabot PRs
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_AUTO_MERGE }}
         run: |
           echo "Checking for open Dependabot PRs..."
           
