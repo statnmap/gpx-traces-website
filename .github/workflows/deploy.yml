@@ -39,31 +39,74 @@ jobs:
         run: npm audit
 
       - name: Run unit tests
+        id: tests
         run: npm test
+        continue-on-error: ${{ github.event_name == 'schedule' }}
 
       - name: Check code coverage
+        if: success() || github.event_name == 'schedule'
         run: npm run test:coverage
+        continue-on-error: ${{ github.event_name == 'schedule' }}
 
       - name: Upload coverage report to CODECOV
+        if: success() || github.event_name == 'schedule'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Tag current version if scheduled and tests passed
+        id: create_tag
+        if: github.event_name == 'schedule' && steps.tests.outcome == 'success'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          DATE_TAG=$(date +"%Y.%m.%d")
+          NEW_TAG="v$DATE_TAG"
+          echo "Creating new tag: $NEW_TAG"
+          git tag -a "$NEW_TAG" -m "Automated release on $DATE_TAG"
+          git push origin "$NEW_TAG"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
       - name: Run pre-build script
+        if: success() || github.event_name == 'schedule'
         run: node scripts/run-process-gpx.js
 
       - name: Build website
+        if: success() || github.event_name == 'schedule'
         run: npm run build
 
       - name: Generate documentation in dist/docs folder
+        if: success() || github.event_name == 'schedule'
         run: npm run generate-docs
 
-      - name: Fetch the last tagged version
-        if: github.event_name == 'schedule'
+      - name: Fetch last tagged version if tests failed
+        id: fetch_last_tag
+        if: github.event_name == 'schedule' && steps.tests.outcome == 'failure'
         run: |
           git fetch --tags
           LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Using previous stable tag: $LAST_TAG"
           git checkout $LAST_TAG
+          echo "last_tag=$LAST_TAG" >> $GITHUB_OUTPUT
+          # Re-run build process with the stable version
+          npm install
+          node scripts/run-process-gpx.js
+          npm run build
+          npm run generate-docs
+
+      - name: Set tag info for release notes
+        id: tag_info
+        if: github.event_name == 'schedule'
+        run: |
+          if [ "${{ steps.tests.outcome }}" == "success" ]; then
+            CURRENT_TAG="${{ steps.create_tag.outputs.new_tag }}"
+            echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+            echo "message=✅ Tests passed. Deployed new version $CURRENT_TAG" >> $GITHUB_OUTPUT
+          else
+            CURRENT_TAG="${{ steps.fetch_last_tag.outputs.last_tag }}"
+            echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+            echo "message=⚠️ Tests failed. Deployed previous stable version $CURRENT_TAG" >> $GITHUB_OUTPUT
+          fi
 
       - name: Deploy to GitHub Pages (release)
         if: github.event_name == 'release' || github.event_name == 'schedule'
@@ -72,6 +115,7 @@ jobs:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: ./dist
           keep_files: dev/
+          commit_message: "${{ steps.tag_info.outputs.message || 'Deploy to GitHub Pages' }}"
 
       - name: Deploy to GitHub Pages (dev)
         if: github.event_name != 'release' && github.event_name != 'schedule'
