@@ -31,7 +31,7 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.28.0",
     "@turf/turf": "^7.2.0",
-    "babel-jest": "^30.0.5",
+    "babel-jest": "^30.1.2",
     "babel-loader": "^10.0.0",
     "babel-preset-jest": "^30.0.1",
     "copy-webpack-plugin": "^13.0.0",
