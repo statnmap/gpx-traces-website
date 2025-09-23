@@ -13,7 +13,6 @@ updates:
     # Labels on pull requests
     labels:
       - "dependencies"
-      - "automerge"
     # Allow up to 10 open pull requests for npm dependencies
     open-pull-requests-limit: 10
     # Configure update preferences
