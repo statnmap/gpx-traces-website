@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>GPX Traces Map</h1>
+<p><img src="https://github.com/statnmap/gpx-traces-website/workflows/Deploy/badge.svg" alt="CI">
+<a href="https://codecov.io/gh/statnmap/gpx-traces-website"><img src="https://codecov.io/gh/statnmap/gpx-traces-website/graph/badge.svg?token=W4PKFFU3EN" alt="codecov"></a>
+<img src="https://img.shields.io/github/license/statnmap/gpx-traces-website" alt="License"></p>
+<p>This repository contains the necessary code to process GPX files stored in a Google Drive folder as input and show the GPX traces on an interactive map.</p>
+<p>=&gt; Read related blog post to see how this repository was built : <a href="https://statnmap.com/2025-01-27-creating-a-website-in-node-js-with-github-copilot-workspace/">Creating a Node.js Website with GitHub Copilot Workspace Using Best Development Practices in R </a></p>
+<h2>Categories</h2>
+<p>When you upload your GPX file in the Google Drive, you need to properly name it, so that it is correctly colored on the website.</p>
+<p>Indeed, the GPX traces are categorized into five categories:</p>
+<ul>
+<li><code>parcours</code>: Files starting with &quot;Parcours&quot;</li>
+<li><code>chemin_boueux</code>: Files containing &quot;chemin&quot; and &quot;boueux&quot;</li>
+<li><code>chemin_inondable</code>: Files containing &quot;chemin&quot; and &quot;inondable&quot;</li>
+<li><code>danger</code>: Files containing &quot;danger&quot;</li>
+<li><code>autres</code>: Other files</li>
+</ul>
+<p>The category is determined based on the GPX file name. Ensure the file name includes the category to map it correctly.</p>
+<p>To add new categories, modify the <code>getCategory</code> function in the <code>scripts/process-gpx.js</code> file.
+To update the effect of new categories on color and weight, modify the <code>getColor</code> and <code>getWeight</code> functions in the <code>scripts/map.js</code> file.
+Also, do not forget to add it to the box selection in index.html if needed</p>
+<h2>Documentation</h2>
+<p>The documentation for the codebase can be found under the <code>docs/</code> directory in the generated website: https://statnmap.github.io/gpx-traces-website/docs/
+The documentation is generated using JSDoc.</p>
+<h2>Directory Structure</h2>
+<ul>
+<li><code>scripts/</code>: Directory to store scripts.</li>
+<li><code>tests/</code>: Directory to store unit tests.</li>
+<li><code>test-gpx-files/</code>: Directory to store GPX files to be used for unit tests.</li>
+<li><code>.github/workflows/</code>: Directory to store GitHub Actions workflows.</li>
+</ul>
+<h2>Creating the GOOGLE_DRIVE_CREDENTIALS Secret</h2>
+<p>To create the <code>GOOGLE_DRIVE_CREDENTIALS</code> secret in your GitHub repository, follow these steps:</p>
+<ol>
+<li>Go to your repository on GitHub.</li>
+<li>Click on the &quot;Settings&quot; tab.</li>
+<li>In the left sidebar, click on &quot;Secrets&quot;.</li>
+<li>Click on the &quot;New repository secret&quot; button.</li>
+<li>In the &quot;Name&quot; field, enter <code>GOOGLE_DRIVE_CREDENTIALS</code>.</li>
+<li>In the &quot;Value&quot; field, paste the content of your <code>credentials.json</code> file.</li>
+<li>Click on the &quot;Add secret&quot; button.</li>
+</ol>
+<p>To create the content of the <code>credentials.json</code> file, follow these steps:</p>
+<ol>
+<li>Go to the Google Cloud Console: https://console.cloud.google.com/</li>
+<li>Create a new project or select an existing project.</li>
+<li>Enable the Google Drive API for the project.</li>
+<li>Create credentials for the project:
+<ul>
+<li>Go to the &quot;Credentials&quot; tab.</li>
+<li>Click on the &quot;Create credentials&quot; button.</li>
+<li>Select &quot;Service account&quot; from the dropdown menu.</li>
+<li>Fill in the required information and click &quot;Create&quot;.</li>
+<li>On the &quot;Grant this service account access to project&quot; step, assign the &quot;Viewer&quot; role.</li>
+<li>Click &quot;Continue&quot; and then &quot;Done&quot;.</li>
+</ul>
+</li>
+<li>Download the JSON key file for the service account:
+<ul>
+<li>In the &quot;Credentials&quot; tab, find the service account you just created.</li>
+<li>Click on the &quot;Manage keys&quot; button.</li>
+<li>Click on the &quot;Add key&quot; button and select &quot;Create new key&quot;.</li>
+<li>Choose the JSON key type and click &quot;Create&quot;.</li>
+<li>The JSON key file will be downloaded to your computer.</li>
+</ul>
+</li>
+<li>Open the downloaded JSON key file and copy its content.</li>
+<li>Use the copied content as the value for the <code>GOOGLE_DRIVE_CREDENTIALS</code> secret in your GitHub repository.</li>
+</ol>
+<h2>Creating the GOOGLE_DRIVE_FOLDER_ID Secret</h2>
+<p>To create the <code>GOOGLE_DRIVE_FOLDER_ID</code> secret in your GitHub repository, follow these steps:</p>
+<ol>
+<li>Go to your repository on GitHub.</li>
+<li>Click on the &quot;Settings&quot; tab.</li>
+<li>In the left sidebar, click on &quot;Secrets&quot;.</li>
+<li>Click on the &quot;New repository secret&quot; button.</li>
+<li>In the &quot;Name&quot; field, enter <code>GOOGLE_DRIVE_FOLDER_ID</code>.</li>
+<li>In the &quot;Value&quot; field, enter the ID of the specific folder on Google Drive.</li>
+<li>Click on the &quot;Add secret&quot; button.</li>
+</ol>
+<p>This will create the <code>GOOGLE_DRIVE_FOLDER_ID</code> secret in your repository, which will be used by the GitHub Actions workflows to specify the folder containing the GPX files.</p>
+<h2>Creating the GOOGLE_DRIVE_FOLDER_ID_TEST Secret</h2>
+<p>To create the <code>GOOGLE_DRIVE_FOLDER_ID_TEST</code> secret in your GitHub repository, follow these steps:</p>
+<ol>
+<li>Go to your repository on GitHub.</li>
+<li>Click on the &quot;Settings&quot; tab.</li>
+<li>In the left sidebar, click on &quot;Secrets&quot;.</li>
+<li>Click on the &quot;New repository secret&quot; button.</li>
+<li>In the &quot;Name&quot; field, enter <code>GOOGLE_DRIVE_FOLDER_ID_TEST</code>.</li>
+<li>In the &quot;Value&quot; field, enter the ID of the specific test folder on Google Drive.</li>
+<li>Click on the &quot;Add secret&quot; button.</li>
+</ol>
+<p>This will create the <code>GOOGLE_DRIVE_FOLDER_ID_TEST</code> secret in your repository, which will be used by the GitHub Actions workflows to specify the test folder containing the GPX files.</p>
+<h2>Finding the ID of the GOOGLE_DRIVE_FOLDER_ID</h2>
+<p>To find the ID of the specific folder on Google Drive, follow these steps:</p>
+<ol>
+<li>Go to Google Drive: https://drive.google.com/</li>
+<li>Navigate to the folder you want to use.</li>
+<li>Look at the URL in your browser's address bar. The folder ID is the long string of characters after <code>folders/</code> in the URL.</li>
+<li>Copy this folder ID and use it as the value for the <code>GOOGLE_DRIVE_FOLDER_ID</code> secret in your GitHub repository.</li>
+</ol>
+<h2>Activating Google Drive API</h2>
+<p>To activate the Google Drive API during the console.cloud.google.com process, follow these steps:</p>
+<ol>
+<li>Go to the Google Cloud Console: https://console.cloud.google.com/</li>
+<li>Create a new project or select an existing project.</li>
+<li>In the left sidebar, click on &quot;APIs &amp; Services&quot; and then &quot;Library&quot;.</li>
+<li>In the search bar, type &quot;Google Drive API&quot; and select it from the search results.</li>
+<li>Click on the &quot;Enable&quot; button to activate the Google Drive API for your project.</li>
+<li>Follow the steps to create credentials and download the JSON key file as described in the &quot;How to create the content of the credentials.json?&quot; section.</li>
+</ol>
+<h2>Adding a New GPX File</h2>
+<p>To add a new GPX file, follow these steps:</p>
+<ol>
+<li>Upload the new GPX file to the designated Google Drive folder.</li>
+<li>Ensure the GPX file name includes the category (&quot;sec&quot;, &quot;inonde&quot;, &quot;boueux&quot;) to map it to the correct category.</li>
+<li>Run the pre-build script to process the GPX files and update the JSON file:<pre class="prettyprint source lang-sh"><code>node scripts/process-gpx.js
+</code></pre>
+</li>
+</ol>
+<h2>GitHub Actions and Deployment</h2>
+<p>The repository is configured to use GitHub Actions to build and deploy the website. The pre-build script is included in the build process to process the GPX files and update the JSON file whenever new GPX files are added or existing ones are modified.</p>
+<p>The static website is hosted on GitHub Pages. The repository is configured to automatically build and deploy the website using GitHub Actions whenever changes are made to the GPX files or the codebase.</p>
+<p>To add your current GPS position on the map when using a smartphone, follow these steps:</p>
+<ol>
+<li>Open the website on your smartphone.</li>
+<li>Click the &quot;Add Current GPS Position&quot; button.</li>
+<li>Allow the website to access your location if prompted.</li>
+<li>Your current GPS position will be added to the map with a marker.</li>
+</ol>
+<h2>Trace Name</h2>
+<p>The trace name (<code>trace.name</code>) used in the application is derived from the GPX filename (without extension). Ensure the GPX filename is descriptive and includes the category to map it correctly.</p>
+<h2>Running the Script Locally with Google Drive Credentials</h2>
+<p>To run the script locally while defining the <code>GOOGLE_DRIVE_FOLDER_ID</code> and <code>GOOGLE_DRIVE_CREDENTIALS</code> values during the Terminal session, follow these steps:</p>
+<ol>
+<li>
+<p>Open a Terminal session.</p>
+</li>
+<li>
+<p>Install the required dependencies by running:</p>
+<pre class="prettyprint source lang-sh"><code>npm install
+</code></pre>
+</li>
+<li>
+<p>Set the <code>GOOGLE_DRIVE_FOLDER_ID</code> environment variables by running:</p>
+<pre class="prettyprint source lang-sh"><code>export GOOGLE_DRIVE_FOLDER_ID=&quot;your-folder-id&quot;
+export GOOGLE_DRIVE_FOLDER_ID_TEST=&quot;your-test-folder-id&quot;
+</code></pre>
+<p>Replace <code>&quot;your-folder-id&quot;</code> with the actual folder ID from Google Drive.</p>
+</li>
+<li>
+<p>Set the <code>GOOGLE_DRIVE_CREDENTIALS</code> environment variable by running:</p>
+<pre class="prettyprint source lang-sh"><code>export GOOGLE_DRIVE_CREDENTIALS='{
+  &quot;type&quot;: &quot;service_account&quot;,
+  &quot;project_id&quot;: &quot;gpx-traces-website&quot;,
+  &quot;private_key_id&quot;: &quot;your-private-key-id&quot;,
+  &quot;private_key&quot;: &quot;-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n&quot;,
+  &quot;client_email&quot;: &quot;your-client-email&quot;,
+  &quot;client_id&quot;: &quot;your-client-id&quot;,
+  &quot;auth_uri&quot;: &quot;https://accounts.google.com/o/oauth2/auth&quot;,
+  &quot;token_uri&quot;: &quot;https://oauth2.googleapis.com/token&quot;,
+  &quot;auth_provider_x509_cert_url&quot;: &quot;https://www.googleapis.com/oauth2/v1/certs&quot;,
+  &quot;client_x509_cert_url&quot;: &quot;https://www.googleapis.com/robot/v1/metadata/x509/your-client-email&quot;
+}'
+</code></pre>
+<p>Replace the placeholders with the actual values from your <code>credentials.json</code> file.</p>
+</li>
+<li>
+<p>Create the <code>credentials.json</code> file by running:</p>
+<pre class="prettyprint source lang-sh"><code>echo '{
+  &quot;type&quot;: &quot;service_account&quot;,
+  &quot;project_id&quot;: &quot;gpx-traces-website&quot;,
+  &quot;private_key_id&quot;: &quot;your-private-key-id&quot;,
+  &quot;private_key&quot;: &quot;-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY\n-----END PRIVATE KEY-----\n&quot;,
+  &quot;client_email&quot;: &quot;your-client-email&quot;,
+  &quot;client_id&quot;: &quot;your-client-id&quot;,
+  &quot;auth_uri&quot;: &quot;https://accounts.google.com/o/oauth2/auth&quot;,
+  &quot;token_uri&quot;: &quot;https://oauth2.googleapis.com/token&quot;,
+  &quot;auth_provider_x509_cert_url&quot;: &quot;https://www.googleapis.com/oauth2/v1/certs&quot;,
+  &quot;client_x509_cert_url&quot;: &quot;https://www.googleapis.com/robot/v1/metadata/x509/your-client-email&quot;
+}' > credentials.json
+</code></pre>
+<p>Replace the placeholders with the actual values from your <code>credentials.json</code> file.</p>
+</li>
+<li>
+<p>Run the pre-processing script by executing:</p>
+<pre class="prettyprint source lang-sh"><code>node scripts/run-process-gpx.js
+</code></pre>
+</li>
+</ol>
+<p>This will process the GPX files from the specified Google Drive folder and update the <code>traces-real/traces.json</code> file.</p>
+<ol start="7">
+<li>Run build locally</li>
+</ol>
+<pre class="prettyprint source lang-sh"><code>npm run build
+</code></pre>
+<ol start="8">
+<li>Run the local server</li>
+</ol>
+<pre class="prettyprint source lang-sh"><code>webpack serve
+</code></pre>
+<p>Stop the server by pressing <code>Ctrl + C</code> in the terminal.</p>
+<h2>Creating GPX Files for Unit Tests and Storing Them on Google Drive</h2>
+<p>To create the correct GPX files for unit tests and store them manually on the proper Google Drive, follow these steps:</p>
+<ol>
+<li>Create the GPX files with the required content. Ensure the file names include the category (&quot;parcours&quot;, &quot;chemin_boueux&quot;, &quot;chemin_inondable&quot;, &quot;danger&quot;, &quot;autres&quot;) to map them correctly.</li>
+<li>Store the gpx files in the &quot;test-gpx-files/&quot; directory to record changes</li>
+<li>Upload the GPX files to the designated test folder on Google Drive.</li>
+<li>Find the ID of the test folder on Google Drive by navigating to the folder and copying the long string of characters after <code>folders/</code> in the URL.</li>
+<li>Create the <code>GOOGLE_DRIVE_FOLDER_ID_TEST</code> secret in your GitHub repository with the test folder ID as the value. Refer to the instructions in the <code>README.md</code> file for creating secrets.</li>
+</ol>
+<h2>Code Quality and Style Enforcement</h2>
+<p>The project uses ESLint for code quality and style enforcement. ESLint helps to identify and fix problems in the JavaScript code, ensuring that the codebase follows consistent coding standards.</p>
+<p>The project also uses Prettier for code formatting. Prettier automatically formats the code according to a set of predefined rules, making the code more readable and maintainable.</p>
+<p>To run ESLint and Prettier, use the following commands:</p>
+<pre class="prettyprint source lang-sh"><code>npm run lint
+npm run format
+</code></pre>
+<h2>GitHub Copilot Workflow Guide</h2>
+<p>This project has a standardized GitHub Copilot workflow guide that defines best practices for using AI assistance in development. The guide helps ensure consistency, quality, and thoroughness when working with Copilot.</p>
+<p>The workflow guide covers:</p>
+<ul>
+<li>Analysis Phase: Problem understanding and solution planning</li>
+<li>Implementation Phase: Code writing and modification best practices</li>
+<li>Verification Phase: Testing and quality assurance procedures</li>
+<li>Finalization Phase: Documentation and preparation for commit</li>
+<li>Pre-Commit Checklist: Steps to follow before finalizing changes</li>
+</ul>
+<p>To use the guide, simply tell Copilot: &quot;Please follow our Copilot Workflow Guide when responding&quot; at the beginning of a conversation. Copilot: &quot;Please follow our Copilot Workflow Guide when responding&quot; at the beginning of a conversation.</p>
+<p>For complete details, see the <a href="docs/copilot-workflow-guide.md">Copilot Workflow Guide</a>.</p>
+<h2>JavaScript Transpilation</h2>
+<p>The project uses Babel for JavaScript transpilation. Babel allows the use of modern JavaScript features by converting the code into a compatible version that can run in older browsers.</p>
+<p>The Babel configuration can be found in the <code>babel.config.json</code> file.</p>
+<h2>Bundling</h2>
+<p>The project uses Webpack for bundling the JavaScript code and other assets. Webpack helps to optimize the code and manage dependencies, making the project more efficient and easier to maintain.</p>
+<p>The Webpack configuration can be found in the <code>webpack.config.js</code> file.</p>
+<h2>Generating Documentation</h2>
+<p>The project uses JSDoc to generate documentation for the JavaScript code. JSDoc allows you to document your code using comments, and then generate an HTML documentation report.</p>
+<p>To generate the documentation, use the following command:</p>
+<pre class="prettyprint source lang-sh"><code>npm run generate-docs
+</code></pre>
+<p>The generated documentation will be available in the <code>out/</code> directory.</p>
+<h2>Deploying Documentation</h2>
+<p>The GitHub Actions workflow is configured to generate and deploy the documentation to a sub-directory of the gh-pages branch during CI/CD. The documentation will be available at <code>https://statnmap.github.io/gpx-traces-website/docs/</code>.</p>
+<h2>Simplifying GPX File Geometry</h2>
+<p>The code now includes a feature to simplify GPX file geometry while keeping one point every 10 meters. This helps reduce the size of GPX files and improve performance.</p>
+<p>To achieve this, the <code>simplifyCoordinates</code> function was added to the <code>scripts/process-gpx.js</code> file. This function filters coordinates based on a 10-meter distance threshold.</p>
+<p>The <code>getCoordinates</code> function in the <code>scripts/process-gpx.js</code> file was updated to use the <code>simplifyCoordinates</code> function.</p>
+<p>Unit tests were added in the <code>tests/process-gpx.test.js</code> file to verify the simplification logic.</p>
+<h2>Cron Job for Deploying Last Tagged Version</h2>
+<p>The deploy CI workflow now includes a cron job that deploys the last tagged version. The cron job is scheduled to run every Monday at 9 AM. This ensures that the latest tagged version is deployed to GitHub Pages on a regular basis. The cron job deploys the last tagged version only.</p>
+<h2>License</h2>
+<p>This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Dec 05 2025 09:56:34 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
