@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write  # Gives permission to push tags and commits
+  pages: write     # Gives permission to deploy to GitHub Pages
 
 jobs:
   build:
@@ -117,7 +118,7 @@ jobs:
         if: github.event_name == 'release' || github.event_name == 'schedule'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           keep_files: dev/
           commit_message: "${{ steps.tag_info.outputs.message || 'Deploy to GitHub Pages' }}"
@@ -126,6 +127,6 @@ jobs:
         if: github.event_name != 'release' && github.event_name != 'schedule'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           destination_dir: dev
