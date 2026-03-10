@@ -1,0 +1,46 @@
+name: Weekly Dependency Audit Fix
+
+on:
+  schedule:
+    # Run Monday at 05:00 UTC (adjust if you want another day/time)
+    - cron: '0 5 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  audit-fix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit fix (lockfile-only)
+        run: |
+          set -e
+          npm audit fix --package-lock-only
+
+      - name: Create PR if lockfile changed
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update lockfile with npm audit fix"
+          title: "fix: update package-lock to resolve vulnerabilities"
+          body: |
+            This PR updates `package-lock.json` using `npm audit fix --package-lock-only`.
+
+            Run the full test suite on this PR before merging.
+          branch: "audit-fix-${{ github.run_id }}"
+          base: main
+          labels: dependencies
+          paths: |
+            package-lock.json
