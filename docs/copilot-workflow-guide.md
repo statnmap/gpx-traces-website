@@ -48,6 +48,8 @@ The guide is organized to follow a typical development workflow:
 - "Have you run `npm update` to update the dependencies before committing?"
 
 > ⚠️ **Important Reminder**: Always run `npm update` before committing changes to ensure all dependencies are up-to-date. This is a frequently forgotten step in this project.
+>
+> In cases where you are applying a narrow security override or a single lockfile fix, use `npm install --package-lock-only` instead of a broad `npm update`. That avoids unrelated dependency churn while still regenerating the lockfile for the targeted fix.
 
 ### CI/CD Pipeline
 - "Do I need to change any other actions files for this same problem?"
