@@ -60,7 +60,7 @@
   },
   "overrides": {
     "ajv": ">=8.18.0",
-    "markdown-it": ">=14.1.1",
+    "markdown-it": ">=14.2.0",
     "underscore": ">=1.13.8",
     "path-to-regexp": "0.1.13",
     "serialize-javascript": "7.0.5",
