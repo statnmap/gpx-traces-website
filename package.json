@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.6",
-    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-env": "^8.0.2",
     "@turf/turf": "^7.3.0",
     "babel-jest": "^30.3.0",
     "babel-loader": "^10.1.0",
