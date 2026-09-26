@@ -2,8 +2,9 @@ name: Weekly Dependency Audit Fix
 
 on:
   schedule:
-    # Run Monday at 05:00 UTC, after Dependabot (04:00) and before the deploy (09:00)
-    - cron: '0 5 * * 1'
+    # Run Monday at 05:07 UTC, after Dependabot (04:00) and before the deploy (09:07).
+    # Minute 7 avoids the load peak of GitHub scheduled jobs on the hour.
+    - cron: '7 5 * * 1'
   workflow_dispatch: {}
 
 permissions:

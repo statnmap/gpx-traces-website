@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { getColor, getWeight } from './map-utils';
+import { getColor, getWeight, getDistanceClass } from './map-utils';
 
 /**
  * The path to the output dir where the processed gpx files were saved.
@@ -61,84 +61,107 @@ function initializeMap(gpxFilesDir, tracesFilePath) {
     .then((response) => response.json())
     .then((data) => {
       const traces = data.traces;
-      const traceLayers = {};
+      const traceItems = [];
+      const canHover = window.matchMedia('(hover: hover)').matches;
+      const highlightStyle = { color: 'red', weight: 12 };
 
       traces.forEach((trace) => {
         const coordinates = trace.coordinates.map((coord) => [
           coord.lat,
           coord.lon,
         ]);
-        const polyline = L.polyline(coordinates, {
+        const defaultStyle = {
           color: getColor(trace.category),
           weight: getWeight(trace.category),
-        }).addTo(map);
+        };
+        const polyline = L.polyline(coordinates, defaultStyle).addTo(map);
 
-        polyline.on('click', (e) => {
-          const popupContent = `
-            <div>
-              <strong>${trace.name}</strong><br>
-              <a href="${gpxFilesDir}/${trace.sanitizedName}.gpx" download>Download GPX</a>
-            </div>
-          `;
-          const popup = L.popup()
-            .setLatLng(e.latlng)
-            .setContent(popupContent)
-            .openOn(map);
-          polyline.bindPopup(popup);
-        });
+        // Leaflet opens the popup where the trace is clicked or tapped.
+        // The trace stays highlighted while its popup is open.
+        polyline.bindPopup(`
+          <div>
+            <strong>${trace.name}</strong><br>
+            <a href="${gpxFilesDir}/${trace.sanitizedName}.gpx" download>Download GPX</a>
+          </div>
+        `);
+        polyline.on('popupopen', () => polyline.setStyle(highlightStyle));
+        polyline.on('popupclose', () => polyline.setStyle(defaultStyle));
 
-        polyline.on('mouseover', (e) => {
-          const tooltipContent = `<strong>${trace.name}</strong>`;
-          const tooltip = L.tooltip()
-            .setLatLng(e.latlng)
-            .setContent(tooltipContent)
-            .openOn(map);
-          polyline.bindTooltip(tooltip);
-          polyline.setStyle({ color: 'red', weight: 12 });
-        });
-
-        polyline.on('mouseout', () => {
-          polyline.setStyle({
-            color: getColor(trace.category),
-            weight: getWeight(trace.category),
+        // Hover effects only for devices with a real pointer: on touch screens
+        // the browser emulates mouseover on tap, without a matching mouseout.
+        if (canHover) {
+          polyline.bindTooltip(`<strong>${trace.name}</strong>`, {
+            sticky: true,
           });
-        });
-
-        polyline.on('touchstart', (e) => {
-          const popupContent = `
-            <div>
-              <strong>${trace.name}</strong><br>
-              <a href="${gpxFilesDir}/${trace.sanitizedName}.gpx" download>Download GPX</a>
-            </div>
-          `;
-          const popup = L.popup()
-            .setLatLng(e.latlng)
-            .setContent(popupContent)
-            .openOn(map);
-          polyline.bindPopup(popup);
-        });
-
-        if (!traceLayers[trace.category]) {
-          traceLayers[trace.category] = [];
+          polyline.on('mouseover', () => polyline.setStyle(highlightStyle));
+          polyline.on('mouseout', () => {
+            if (!polyline.isPopupOpen()) {
+              polyline.setStyle(defaultStyle);
+            }
+          });
         }
-        traceLayers[trace.category].push(polyline);
-      });
 
-      const checkboxes = document.querySelectorAll('input[name="category"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.addEventListener('change', () => {
-          // A category can have no trace (e.g. no "autres" file on Drive)
-          const layers = traceLayers[checkbox.value] || [];
-          if (checkbox.checked) {
-            layers.forEach((layer) => map.addLayer(layer));
-          } else {
-            layers.forEach((layer) => map.removeLayer(layer));
-          }
+        traceItems.push({
+          polyline,
+          category: trace.category,
+          // Distance filters only apply to "parcours"
+          distanceClass:
+            trace.category === 'parcours'
+              ? getDistanceClass(trace.distanceKm)
+              : null,
         });
       });
+
+      // "Distance inconnue" is only offered when a parcours has no distance
+      if (traceItems.some((item) => item.distanceClass === 'unknown')) {
+        document.getElementById('distance-unknown').hidden = false;
+      }
+
+      document
+        .querySelectorAll('input[name="category"], input[name="distance"]')
+        .forEach((checkbox) => {
+          checkbox.addEventListener('change', () =>
+            updateVisibility(map, traceItems)
+          );
+        });
     });
 
   return map;
+}
+
+/**
+ * Returns the values of the checked checkboxes of a filter.
+ * @param {string} name - The name of the checkboxes ("category" or "distance").
+ * @returns {Set<string>} The checked values.
+ */
+function getCheckedValues(name) {
+  const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+  return new Set([...checked].map((checkbox) => checkbox.value));
+}
+
+/**
+ * Shows the traces matching both the category and the distance filters.
+ * @param {L.Map} map - The Leaflet map.
+ * @param {Object[]} traceItems - The traces with their polyline, category and
+ *   distance class (null when the distance filters do not apply).
+ */
+function updateVisibility(map, traceItems) {
+  const categories = getCheckedValues('category');
+  const distanceClasses = getCheckedValues('distance');
+  traceItems.forEach(({ polyline, category, distanceClass }) => {
+    const visible =
+      categories.has(category) &&
+      (distanceClass === null || distanceClasses.has(distanceClass));
+    if (visible) {
+      map.addLayer(polyline);
+    } else {
+      map.removeLayer(polyline);
+    }
+  });
+  // Distance filters are useless when parcours are hidden
+  document
+    .getElementById('distance-filters')
+    .classList.toggle('disabled', !categories.has('parcours'));
 }
 
 /**

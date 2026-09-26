@@ -1,6 +1,10 @@
 process.env.NODE_ENV = 'test';
 
-const { getColor, getWeight } = require('../scripts/map-utils');
+const {
+  getColor,
+  getWeight,
+  getDistanceClass,
+} = require('../scripts/map-utils');
 
 describe('getColor', () => {
   test('returns correct color for parcours category', () => {
@@ -43,5 +47,20 @@ describe('getWeight', () => {
 
   test('returns correct weight for autres category', () => {
     expect(getWeight('autres')).toBe(8);
+  });
+});
+
+describe('getDistanceClass', () => {
+  test.each([
+    [5, 'lt8'],
+    [7.9, 'lt8'],
+    [8, '8to10'],
+    [9.9, '8to10'],
+    [10, 'gte10'],
+    [21, 'gte10'],
+    [null, 'unknown'],
+    [undefined, 'unknown'],
+  ])('returns the class of %s km', (distanceKm, expected) => {
+    expect(getDistanceClass(distanceKm)).toBe(expected);
   });
 });
