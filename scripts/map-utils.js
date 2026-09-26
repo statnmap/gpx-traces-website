@@ -36,4 +36,22 @@ function getWeight(category) {
   }
 }
 
-export { getColor, getWeight };
+/**
+ * Returns the distance class of a "parcours", used by the distance filters.
+ * @param {number|null} distanceKm - The distance read from the trace name.
+ * @returns {string} 'lt8' (< 8 km), '8to10' (8 to < 10 km), 'gte10' (>= 10 km)
+ *   or 'unknown' when the name has no distance.
+ */
+function getDistanceClass(distanceKm) {
+  if (typeof distanceKm !== 'number') {
+    return 'unknown';
+  } else if (distanceKm < 8) {
+    return 'lt8';
+  } else if (distanceKm < 10) {
+    return '8to10';
+  } else {
+    return 'gte10';
+  }
+}
+
+export { getColor, getWeight, getDistanceClass };

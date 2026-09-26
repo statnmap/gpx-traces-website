@@ -125,7 +125,8 @@ To add a new GPX file, follow these steps:
 
 1. Upload the new GPX file to the designated Google Drive folder.
 2. Ensure the GPX file name includes the category ("sec", "inonde", "boueux") to map it to the correct category.
-3. Run the pre-build script to process the GPX files and update the JSON file:
+3. For a "parcours", write its distance in the name, like `Parcours - 9km - ...` (`8km`, `8 km`, `8,5km` also work). It is used by the distance filters under the map: less than 8 km, 8 to 10 km (excluded), 10 km and more. A parcours without distance in its name goes in "Distance inconnue". The distance of other categories is ignored.
+4. Run the pre-build script to process the GPX files and update the JSON file:
    ```sh
    node scripts/process-gpx.js
    ```

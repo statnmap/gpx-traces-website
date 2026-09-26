@@ -115,12 +115,14 @@ async function processGpxFiles(gpxFilesDir, tracesFilePath) {
           throw err;
         }
 
+        const name = path.basename(file.name, '.gpx');
+        const category = getCategory(sanitizeFileName(name));
         const trace = {
-          name: path.basename(file.name, '.gpx'),
-          sanitizedName: sanitizeFileName(path.basename(file.name, '.gpx')),
-          category: getCategory(
-            sanitizeFileName(path.basename(file.name, '.gpx'))
-          ),
+          name,
+          sanitizedName: sanitizeFileName(name),
+          category,
+          // Distance only makes sense for "parcours", not for information
+          distanceKm: category === 'parcours' ? getDistanceKm(name) : null,
           coordinates: getCoordinates(result.gpx.trk[0].trkseg[0].trkpt),
         };
 
@@ -173,6 +175,17 @@ async function writeTracesJson(traces, tracesFilePath) {
       }
     });
   });
+}
+
+/**
+ * Reads the distance written in a trace name, like "Parcours - 9km - ..." or
+ * "Parcours_8km_...". The distance is not computed from the GPX geometry.
+ * @param {string} name - The name of the trace (file name without extension).
+ * @returns {number|null} The distance in kilometers, or null if not found.
+ */
+function getDistanceKm(name) {
+  const match = name.match(/(?<![\d.,])(\d+(?:[.,]\d+)?)\s*kms?(?![a-z])/i);
+  return match ? parseFloat(match[1].replace(',', '.')) : null;
 }
 
 /**
@@ -288,6 +301,7 @@ function cleanGpxFilesDirectory(gpxFilesDir) {
 module.exports = {
   processGpxFiles,
   getCategory,
+  getDistanceKm,
   getCoordinates,
   simplifyCoordinates,
 };
