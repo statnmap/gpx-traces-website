@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - main
+  # Release deployments (times in UTC, France is UTC+2 in summer, UTC+1 in winter).
+  # Minute 7 avoids the load peak of GitHub scheduled jobs on the hour.
   schedule:
-    - cron: '0 9 * * 1'
-  # Manual run = release deployment (same as the weekly schedule)
+    - cron: '7 9 * * 1'   # Monday 9:07 UTC, after the weekly dependency updates
+    - cron: '7 10 * * 3'  # Wednesday 10:07 UTC (12:07 in summer), for Tuesday walks
+  # Manual run = release deployment (same as the scheduled ones)
   workflow_dispatch:
 
 permissions:

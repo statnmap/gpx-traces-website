@@ -307,7 +307,7 @@ Unit tests were added in the `tests/process-gpx.test.js` file to verify the simp
 
 ## Cron Job for Deploying Last Tagged Version
 
-The deploy CI workflow now includes a cron job that deploys the last tagged version. The cron job is scheduled to run every Monday at 9 AM. This ensures that the latest tagged version is deployed to GitHub Pages on a regular basis. The cron job deploys the last tagged version only.
+The deploy workflow publishes a release to GitHub Pages every Monday at 9:07 UTC and every Wednesday at 10:07 UTC (12:07 in France in summer, 11:07 in winter), with fresh GPX files from Google Drive. If the production audit and the tests pass, the current version is tagged (`vYYYY.MM.DD`) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed. A release can also be started manually from the Actions tab (Deploy > Run workflow). Each push on `main` deploys to the `dev/` folder only.
 
 ## License
 
