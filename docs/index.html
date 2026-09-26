@@ -158,6 +158,7 @@ The documentation is generated using JSDoc.</p>
 <ol>
 <li>Upload the new GPX file to the designated Google Drive folder.</li>
 <li>Ensure the GPX file name includes the category (&quot;sec&quot;, &quot;inonde&quot;, &quot;boueux&quot;) to map it to the correct category.</li>
+<li>For a &quot;parcours&quot;, write its distance in the name, like <code>Parcours - 9km - ...</code> (<code>8km</code>, <code>8 km</code>, <code>8,5km</code> also work). It is used by the distance filters under the map: less than 8 km, 8 to 10 km (excluded), 10 km and more. A parcours without distance in its name goes in &quot;Distance inconnue&quot;. The distance of other categories is ignored.</li>
 <li>Run the pre-build script to process the GPX files and update the JSON file:<pre class="prettyprint source lang-sh"><code>node scripts/process-gpx.js
 </code></pre>
 </li>
@@ -303,7 +304,7 @@ npm run format
 <p>The <code>getCoordinates</code> function in the <code>scripts/process-gpx.js</code> file was updated to use the <code>simplifyCoordinates</code> function.</p>
 <p>Unit tests were added in the <code>tests/process-gpx.test.js</code> file to verify the simplification logic.</p>
 <h2>Cron Job for Deploying Last Tagged Version</h2>
-<p>The deploy CI workflow now includes a cron job that deploys the last tagged version. The cron job is scheduled to run every Monday at 9 AM. This ensures that the latest tagged version is deployed to GitHub Pages on a regular basis. The cron job deploys the last tagged version only.</p>
+<p>The deploy workflow publishes a release to GitHub Pages every Monday at 9:07 UTC and every Wednesday at 10:07 UTC (12:07 in France in summer, 11:07 in winter), with fresh GPX files from Google Drive. If the production audit and the tests pass, the current version is tagged (<code>vYYYY.MM.DD</code>) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed. A release can also be started manually from the Actions tab (Deploy &gt; Run workflow). Each push on <code>main</code> deploys to the <code>dev/</code> folder only.</p>
 <h2>License</h2>
 <p>This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.</p></article>
     </section>
@@ -316,13 +317,13 @@ npm run format
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getCheckedValues">getCheckedValues</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getDistanceClass">getDistanceClass</a></li><li><a href="global.html#getDistanceKm">getDistanceKm</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#updateVisibility">updateVisibility</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Sep 26 2026 12:58:33 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Sep 26 2026 13:34:24 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

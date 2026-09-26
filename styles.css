@@ -30,16 +30,32 @@ main {
   margin-bottom: 1rem;
 }
 
-#filters {
+#filters,
+#distance-filters {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 1rem;
 }
 
-#filters label {
+#filters label,
+#distance-filters label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+#distance-filters {
+  margin-top: 0.5rem;
+  color: #35978f;
+}
+
+#distance-filters label[hidden] {
+  display: none;
+}
+
+#distance-filters.disabled {
+  opacity: 0.4;
 }
 
 /* Touch-specific styles for better touch accuracy */
@@ -49,7 +65,13 @@ main {
 
 /* Media query for smaller screens */
 @media (max-width: 600px) {
-  #filters {
+  #filters,
+  #distance-filters {
     flex-wrap: wrap;
+  }
+
+  #distance-filters > span {
+    flex-basis: 100%;
+    text-align: center;
   }
 }

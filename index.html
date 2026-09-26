@@ -34,6 +34,25 @@
         Autres
       </label>
     </div>
+    <div id="distance-filters">
+      <span>Distance des parcours :</span>
+      <label>
+        <input type="checkbox" name="distance" value="lt8" checked>
+        Moins de 8 km
+      </label>
+      <label>
+        <input type="checkbox" name="distance" value="8to10" checked>
+        De 8 à 10 km
+      </label>
+      <label>
+        <input type="checkbox" name="distance" value="gte10" checked>
+        10 km et plus
+      </label>
+      <label id="distance-unknown" hidden>
+        <input type="checkbox" name="distance" value="unknown" checked>
+        Distance inconnue
+      </label>
+    </div>
     <button id="add-gps-position">Afficher ma position GPS</button>
   </main>
   <footer>

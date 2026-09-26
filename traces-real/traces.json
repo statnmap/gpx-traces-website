@@ -1,9 +1,226 @@
 {
   "traces": [
     {
+      "name": "parcours - 7,5km - La Roche via La Gaudinière, Haymionniere et Babiniere",
+      "sanitizedName": "parcours___7_5km___la_roche_via_la_gaudiniere__haymionniere_et_babiniere",
+      "category": "parcours",
+      "distanceKm": 7.5,
+      "coordinates": [
+        {
+          "lat": 47.30174699998251,
+          "lon": -1.7256770000000006
+        },
+        {
+          "lat": 47.3014449999825,
+          "lon": -1.7256019999999996
+        },
+        {
+          "lat": 47.30120499998249,
+          "lon": -1.7252319999999999
+        },
+        {
+          "lat": 47.300819999982494,
+          "lon": -1.723972
+        },
+        {
+          "lat": 47.3004199999825,
+          "lon": -1.7233410000000002
+        },
+        {
+          "lat": 47.29977999998249,
+          "lon": -1.7209930000000002
+        },
+        {
+          "lat": 47.29921299998249,
+          "lon": -1.717747
+        },
+        {
+          "lat": 47.29948299998251,
+          "lon": -1.717222000000001
+        },
+        {
+          "lat": 47.30182299998249,
+          "lon": -1.7157010000000006
+        },
+        {
+          "lat": 47.3021399999825,
+          "lon": -1.7150869999999996
+        },
+        {
+          "lat": 47.30208999998248,
+          "lon": -1.7139749999999998
+        },
+        {
+          "lat": 47.301198999982496,
+          "lon": -1.7127470000000011
+        },
+        {
+          "lat": 47.301103999982494,
+          "lon": -1.7121879999999996
+        },
+        {
+          "lat": 47.301397999982505,
+          "lon": -1.7101360000000003
+        },
+        {
+          "lat": 47.301609999982496,
+          "lon": -1.7097309999999988
+        },
+        {
+          "lat": 47.30204399998249,
+          "lon": -1.7101410000000004
+        },
+        {
+          "lat": 47.3035339999825,
+          "lon": -1.710896999999999
+        },
+        {
+          "lat": 47.304659999982505,
+          "lon": -1.7128880000000004
+        },
+        {
+          "lat": 47.3053689999825,
+          "lon": -1.7145139999999992
+        },
+        {
+          "lat": 47.3045629999825,
+          "lon": -1.7158950000000004
+        },
+        {
+          "lat": 47.305484999982504,
+          "lon": -1.7196340000000012
+        },
+        {
+          "lat": 47.3070419999825,
+          "lon": -1.7272699999999994
+        },
+        {
+          "lat": 47.3061389999825,
+          "lon": -1.7270289999999997
+        },
+        {
+          "lat": 47.30619699998251,
+          "lon": -1.7312979999999993
+        },
+        {
+          "lat": 47.30606099998251,
+          "lon": -1.7319550000000004
+        },
+        {
+          "lat": 47.305577999982496,
+          "lon": -1.7319939999999994
+        },
+        {
+          "lat": 47.30525199998251,
+          "lon": -1.732515
+        },
+        {
+          "lat": 47.3054089999825,
+          "lon": -1.7333450000000004
+        },
+        {
+          "lat": 47.30503799998251,
+          "lon": -1.7350639999999988
+        },
+        {
+          "lat": 47.302945999982505,
+          "lon": -1.7357420000000001
+        },
+        {
+          "lat": 47.30083799998249,
+          "lon": -1.7354620000000005
+        },
+        {
+          "lat": 47.300019999982496,
+          "lon": -1.7360210000000003
+        },
+        {
+          "lat": 47.29873099998248,
+          "lon": -1.7376209999999999
+        },
+        {
+          "lat": 47.297979999982495,
+          "lon": -1.7369820000000002
+        },
+        {
+          "lat": 47.29538399998246,
+          "lon": -1.732337999999999
+        },
+        {
+          "lat": 47.293592999982465,
+          "lon": -1.7262179999999998
+        },
+        {
+          "lat": 47.29329299998246,
+          "lon": -1.7245440000000012
+        },
+        {
+          "lat": 47.29354899998247,
+          "lon": -1.7241219999999993
+        },
+        {
+          "lat": 47.29398099998247,
+          "lon": -1.7238479999999996
+        },
+        {
+          "lat": 47.29505799998247,
+          "lon": -1.7257510000000005
+        },
+        {
+          "lat": 47.29594499998249,
+          "lon": -1.725368
+        },
+        {
+          "lat": 47.29603699998248,
+          "lon": -1.7244610000000007
+        },
+        {
+          "lat": 47.29645099998247,
+          "lon": -1.7236360000000002
+        },
+        {
+          "lat": 47.297224999982475,
+          "lon": -1.722652000000001
+        },
+        {
+          "lat": 47.29796899998249,
+          "lon": -1.723719000000001
+        },
+        {
+          "lat": 47.29890399998249,
+          "lon": -1.722425000000001
+        },
+        {
+          "lat": 47.300028999982494,
+          "lon": -1.722867000000001
+        },
+        {
+          "lat": 47.30040499998249,
+          "lon": -1.723253999999999
+        },
+        {
+          "lat": 47.30078099998249,
+          "lon": -1.7238689999999999
+        },
+        {
+          "lat": 47.30126899998251,
+          "lon": -1.7253820000000004
+        },
+        {
+          "lat": 47.30145499998249,
+          "lon": -1.725659
+        },
+        {
+          "lat": 47.3017379999825,
+          "lon": -1.7256819999999995
+        }
+      ]
+    },
+    {
       "name": "parcours - 9km - Erduriere",
       "sanitizedName": "parcours___9km___erduriere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.23516599998232,
@@ -284,244 +501,10 @@
       ]
     },
     {
-      "name": "parcours - La Roche via La Gaudinière, Haymionniere et Babiniere",
-      "sanitizedName": "parcours___la_roche_via_la_gaudiniere__haymionniere_et_babiniere",
-      "category": "parcours",
-      "coordinates": [
-        {
-          "lat": 47.30191799998249,
-          "lon": -1.725442
-        },
-        {
-          "lat": 47.301734999982514,
-          "lon": -1.7255540000000007
-        },
-        {
-          "lat": 47.301836999982505,
-          "lon": -1.7253750000000008
-        },
-        {
-          "lat": 47.30202599998249,
-          "lon": -1.7257040000000006
-        },
-        {
-          "lat": 47.3018419999825,
-          "lon": -1.7257190000000004
-        },
-        {
-          "lat": 47.301885999982495,
-          "lon": -1.7253460000000005
-        },
-        {
-          "lat": 47.301815999982495,
-          "lon": -1.7256030000000004
-        },
-        {
-          "lat": 47.30142399998249,
-          "lon": -1.7255780000000003
-        },
-        {
-          "lat": 47.301021999982495,
-          "lon": -1.7248440000000003
-        },
-        {
-          "lat": 47.30075899998249,
-          "lon": -1.7238289999999992
-        },
-        {
-          "lat": 47.3004199999825,
-          "lon": -1.7233410000000002
-        },
-        {
-          "lat": 47.29977999998249,
-          "lon": -1.7209930000000002
-        },
-        {
-          "lat": 47.29921299998249,
-          "lon": -1.717747
-        },
-        {
-          "lat": 47.29948299998251,
-          "lon": -1.717222000000001
-        },
-        {
-          "lat": 47.30182299998249,
-          "lon": -1.7157010000000006
-        },
-        {
-          "lat": 47.3021399999825,
-          "lon": -1.7150869999999996
-        },
-        {
-          "lat": 47.30208999998248,
-          "lon": -1.7139749999999998
-        },
-        {
-          "lat": 47.301198999982496,
-          "lon": -1.7127470000000011
-        },
-        {
-          "lat": 47.301103999982494,
-          "lon": -1.7121879999999996
-        },
-        {
-          "lat": 47.301397999982505,
-          "lon": -1.7101360000000003
-        },
-        {
-          "lat": 47.301609999982496,
-          "lon": -1.7097309999999988
-        },
-        {
-          "lat": 47.30204399998249,
-          "lon": -1.7101410000000004
-        },
-        {
-          "lat": 47.3035339999825,
-          "lon": -1.710896999999999
-        },
-        {
-          "lat": 47.304659999982505,
-          "lon": -1.7128880000000004
-        },
-        {
-          "lat": 47.3053689999825,
-          "lon": -1.7145139999999992
-        },
-        {
-          "lat": 47.3045629999825,
-          "lon": -1.7158950000000004
-        },
-        {
-          "lat": 47.305484999982504,
-          "lon": -1.7196340000000012
-        },
-        {
-          "lat": 47.3070419999825,
-          "lon": -1.7272699999999994
-        },
-        {
-          "lat": 47.3061389999825,
-          "lon": -1.7270289999999997
-        },
-        {
-          "lat": 47.30619699998251,
-          "lon": -1.7312979999999993
-        },
-        {
-          "lat": 47.30606099998251,
-          "lon": -1.7319550000000004
-        },
-        {
-          "lat": 47.305577999982496,
-          "lon": -1.7319939999999994
-        },
-        {
-          "lat": 47.30525199998251,
-          "lon": -1.732515
-        },
-        {
-          "lat": 47.3054089999825,
-          "lon": -1.7333450000000004
-        },
-        {
-          "lat": 47.30503799998251,
-          "lon": -1.7350639999999988
-        },
-        {
-          "lat": 47.302945999982505,
-          "lon": -1.7357420000000001
-        },
-        {
-          "lat": 47.30083799998249,
-          "lon": -1.7354620000000005
-        },
-        {
-          "lat": 47.300019999982496,
-          "lon": -1.7360210000000003
-        },
-        {
-          "lat": 47.29873099998248,
-          "lon": -1.7376209999999999
-        },
-        {
-          "lat": 47.297979999982495,
-          "lon": -1.7369820000000002
-        },
-        {
-          "lat": 47.29538399998246,
-          "lon": -1.732337999999999
-        },
-        {
-          "lat": 47.293592999982465,
-          "lon": -1.7262179999999998
-        },
-        {
-          "lat": 47.29329299998246,
-          "lon": -1.7245440000000012
-        },
-        {
-          "lat": 47.29354899998247,
-          "lon": -1.7241219999999993
-        },
-        {
-          "lat": 47.29398099998247,
-          "lon": -1.7238479999999996
-        },
-        {
-          "lat": 47.29505799998247,
-          "lon": -1.7257510000000005
-        },
-        {
-          "lat": 47.29594499998249,
-          "lon": -1.725368
-        },
-        {
-          "lat": 47.29603699998248,
-          "lon": -1.7244610000000007
-        },
-        {
-          "lat": 47.29645099998247,
-          "lon": -1.7236360000000002
-        },
-        {
-          "lat": 47.297224999982475,
-          "lon": -1.722652000000001
-        },
-        {
-          "lat": 47.29796899998249,
-          "lon": -1.723719000000001
-        },
-        {
-          "lat": 47.29890399998249,
-          "lon": -1.722425000000001
-        },
-        {
-          "lat": 47.300028999982494,
-          "lon": -1.722867000000001
-        },
-        {
-          "lat": 47.30040499998249,
-          "lon": -1.723253999999999
-        },
-        {
-          "lat": 47.30078099998249,
-          "lon": -1.7238689999999999
-        },
-        {
-          "lat": 47.30126899998251,
-          "lon": -1.7253820000000004
-        },
-        {
-          "lat": 47.301668999982496,
-          "lon": -1.725665
-        }
-      ]
-    },
-    {
       "name": "parcours - 9km - La Roche, La Gaudiniere, La Babiniere",
       "sanitizedName": "parcours___9km___la_roche__la_gaudiniere__la_babiniere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.301972999982496,
@@ -813,6 +796,7 @@
       "name": "Parcours - 10km - Cens - Bongarant",
       "sanitizedName": "parcours___10km___cens___bongarant",
       "category": "parcours",
+      "distanceKm": 10,
       "coordinates": [
         {
           "lat": 47.27837799998242,
@@ -1244,6 +1228,7 @@
       "name": "chemin boueux coueron 2",
       "sanitizedName": "chemin_boueux_coueron_2",
       "category": "chemin_boueux",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.22706899998229,
@@ -1259,6 +1244,7 @@
       "name": "chemin boueux coueron",
       "sanitizedName": "chemin_boueux_coueron",
       "category": "chemin_boueux",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.23434399998229,
@@ -1274,6 +1260,7 @@
       "name": "parcours - 9km - Couëron L'Erdurière via Beaulieu",
       "sanitizedName": "parcours___9km___coueron_l_erduriere_via_beaulieu",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.2348199999823,
@@ -1577,6 +1564,7 @@
       "name": "Parcours - plutôt sec - 9km - La Paquelais, la gare, les fosses noires, la freneliere",
       "sanitizedName": "parcours___plutot_sec___9km___la_paquelais__la_gare__les_fosses_noires__la_freneliere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.336612999982584,
@@ -1780,6 +1768,7 @@
       "name": "parcours - 7km - plutôt sec, de la route ok - cœur autour de Vigneux",
       "sanitizedName": "parcours___7km___plutot_sec__de_la_route_ok___coeur_autour_de_vigneux",
       "category": "parcours",
+      "distanceKm": 7,
       "coordinates": [
         {
           "lat": 47.32491599998255,
@@ -2023,6 +2012,7 @@
       "name": "Parcours plutôt sec, boueux après pluie à la Valiniere - 9km - La Roche via La Biliais Deniaud, La Freuzière",
       "sanitizedName": "parcours_plutot_sec__boueux_apres_pluie_a_la_valiniere___9km___la_roche_via_la_biliais_deniaud__la_freuziere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.324948999982574,
@@ -2246,6 +2236,7 @@
       "name": "Parcours un peu gras au retour automne hiver - 9km - parcours du Trail réduit",
       "sanitizedName": "parcours_un_peu_gras_au_retour_automne_hiver___9km___parcours_du_trail_reduit",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.32493599998256,
@@ -2537,6 +2528,7 @@
       "name": "Parcours pied dans l'eau en automne - 9km - boucle du moulin - Fremière",
       "sanitizedName": "parcours_pied_dans_l_eau_en_automne___9km___boucle_du_moulin___fremiere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.324890999982564,
@@ -2844,6 +2836,7 @@
       "name": "Parcours un peu boueux-mais-ok_8km_La-Paquelais_Valais_Bouvardiere",
       "sanitizedName": "parcours_un_peu_boueux_mais_ok_8km_la_paquelais_valais_bouvardiere",
       "category": "parcours",
+      "distanceKm": 8,
       "coordinates": [
         {
           "lat": 47.33128299998257,
@@ -3127,6 +3120,7 @@
       "name": "Parcours sec - 9km - La Haymonnière, La Roche et La Babinière",
       "sanitizedName": "parcours_sec___9km___la_haymonniere__la_roche_et_la_babiniere",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.325052999982546,
@@ -3334,6 +3328,7 @@
       "name": "Parcours sec - 9km - chemins larges - La Paquelais",
       "sanitizedName": "parcours_sec___9km___chemins_larges___la_paquelais",
       "category": "parcours",
+      "distanceKm": 9,
       "coordinates": [
         {
           "lat": 47.331305999982575,
@@ -3457,6 +3452,7 @@
       "name": "Parcours sec - 10km - Bel Air, Le Croisy, La Jametrie",
       "sanitizedName": "parcours_sec___10km___bel_air__le_croisy__la_jametrie",
       "category": "parcours",
+      "distanceKm": 10,
       "coordinates": [
         {
           "lat": 47.324858999982546,
@@ -3756,6 +3752,7 @@
       "name": "chemin inondable - la Valiniere",
       "sanitizedName": "chemin_inondable___la_valiniere",
       "category": "chemin_inondable",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.32612599998257,
@@ -3779,6 +3776,7 @@
       "name": "Chemin inondable - Fremière",
       "sanitizedName": "chemin_inondable___fremiere",
       "category": "chemin_inondable",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.33678399998259,
@@ -3802,6 +3800,7 @@
       "name": "Chemin inondable - La Roche à La Babinière",
       "sanitizedName": "chemin_inondable___la_roche_a_la_babiniere",
       "category": "chemin_inondable",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.3002749999825,
@@ -3845,6 +3844,7 @@
       "name": "Route danger - La Roche à Bonhaund",
       "sanitizedName": "route_danger___la_roche_a_bonhaund",
       "category": "danger",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.298518999982484,
@@ -3876,6 +3876,7 @@
       "name": "chemin boueux - La Pinelière",
       "sanitizedName": "chemin_boueux___la_pineliere",
       "category": "chemin_boueux",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.32632999998255,
@@ -3891,6 +3892,7 @@
       "name": "Chemin boueux - Rivière du Moulin à Valais",
       "sanitizedName": "chemin_boueux___riviere_du_moulin_a_valais",
       "category": "chemin_boueux",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.32551599998255,
@@ -3922,6 +3924,7 @@
       "name": "Chemin danger - La Boistiere",
       "sanitizedName": "chemin_danger___la_boistiere",
       "category": "danger",
+      "distanceKm": null,
       "coordinates": [
         {
           "lat": 47.33190999998258,

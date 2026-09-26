@@ -1258,6 +1258,160 @@
     
 
     
+    <h4 class="name" id="getCheckedValues"><span class="type-signature"></span>getCheckedValues<span class="signature">(name)</span><span class="type-signature"> &rarr; {Set.&lt;string>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the values of the checked checkboxes of a filter.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the checkboxes ("category" or "distance").</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The checked values.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Set.&lt;string></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="getColor"><span class="type-signature"></span>getColor<span class="signature">(category)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
@@ -1549,6 +1703,322 @@
     <dd>
         
 <span class="param-type">Array.&lt;Object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getDistanceClass"><span class="type-signature"></span>getDistanceClass<span class="signature">(distanceKm)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the distance class of a "parcours", used by the distance filters.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>distanceKm</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The distance read from the trace name.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    'lt8' (< 8 km), '8to10' (8 to < 10 km), 'gte10' (>= 10 km)
+  or 'unknown' when the name has no distance.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getDistanceKm"><span class="type-signature"></span>getDistanceKm<span class="signature">(name)</span><span class="type-signature"> &rarr; {number|null}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Reads the distance written in a trace name, like "Parcours - 9km - ..." or
+"Parcours_8km_...". The distance is not computed from the GPX geometry.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the trace (file name without extension).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The distance in kilometers, or null if not found.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+|
+
+<span class="param-type">null</span>
 
 
     </dd>
@@ -2569,6 +3039,162 @@ The JSON file should have the following structure:
     
 
     
+    <h4 class="name" id="updateVisibility"><span class="type-signature"></span>updateVisibility<span class="signature">(map, traceItems)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Shows the traces matching both the category and the distance filters.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>map</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">L.Map</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Leaflet map.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>traceItems</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The traces with their polyline, category and
+  distance class (null when the distance filters do not apply).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="writeTracesJson"><span class="type-signature">(async) </span>writeTracesJson<span class="signature">(traces, tracesFilePath)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
@@ -2756,13 +3382,13 @@ The JSON file should have the following structure:
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getCheckedValues">getCheckedValues</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getDistanceClass">getDistanceClass</a></li><li><a href="global.html#getDistanceKm">getDistanceKm</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#updateVisibility">updateVisibility</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Sep 26 2026 12:58:33 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sat Sep 26 2026 13:34:24 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
