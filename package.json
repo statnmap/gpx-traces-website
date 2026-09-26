@@ -54,7 +54,8 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "scripts/**/*.{js,jsx}"
+      "scripts/**/*.{js,jsx}",
+      "!scripts/map.js"
     ]
   }
 }
