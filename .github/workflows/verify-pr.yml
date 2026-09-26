@@ -4,8 +4,17 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # This job name is the required status check on `main`: keep it stable.
   verify:
     runs-on: ubuntu-latest
     env:
@@ -16,42 +25,62 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Authenticate with Google Drive
+      # Actions secrets are not exposed to Dependabot PRs: in that case the
+      # Google Drive steps are skipped instead of failing the whole check.
+      - name: Write Google Drive credentials
+        id: drive
+        env:
+          GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
         run: |
-          echo '${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}' > credentials.json
+          if [ -n "$GOOGLE_DRIVE_CREDENTIALS" ]; then
+            printf '%s' "$GOOGLE_DRIVE_CREDENTIALS" > credentials.json
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Google Drive credentials not available, Drive tests and data download are skipped."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Install googleapis library
-        run: npm install googleapis
+      # Only vulnerabilities in shipped (production) dependencies block the PR.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
 
-      - name: Check Dependabot alerts
-        run: npm audit
+      - name: Audit all dependencies (informative)
+        run: npm audit || echo "::warning::npm audit reports vulnerabilities in dev dependencies (not blocking)."
 
-      - name: Run unit tests
-        run: node --experimental-vm-modules node_modules/.bin/jest
-
-      - name: Check code coverage
-        run: node --experimental-vm-modules node_modules/.bin/jest --coverage
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
 
       - name: Upload coverage report to CODECOV
+        if: steps.drive.outputs.available == 'true'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
       - name: Run pre-build script
+        if: steps.drive.outputs.available == 'true'
         run: node --experimental-vm-modules scripts/run-process-gpx.js
+
+      - name: Use test GPX files as build data
+        if: steps.drive.outputs.available != 'true'
+        run: |
+          mkdir -p "$GPX_FILES_DIR" "$(dirname "$TRACES_FILE_PATH")"
+          cp test-gpx-files/*.gpx "$GPX_FILES_DIR/"
+          echo '{"traces":[]}' > "$TRACES_FILE_PATH"
 
       - name: Build website
         run: npm run build
 
       - name: Generate documentation
-        run: node --experimental-vm-modules node_modules/.bin/jsdoc -c jsdoc.json
+        run: npm run generate-docs

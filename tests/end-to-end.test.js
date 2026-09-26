@@ -10,8 +10,14 @@ const { toBeCloseToCoordinates } = require('./customMatchers');
 
 expect.extend({ toBeCloseToCoordinates });
 
+// Google Drive tests need credentials.json and a test folder id. They are not
+// available on Dependabot PRs, so skip instead of failing.
+const hasDriveAccess =
+  fs.existsSync(path.join(__dirname, '../credentials.json')) &&
+  Boolean(process.env.GOOGLE_DRIVE_FOLDER_ID_TEST);
+const describeIfDrive = hasDriveAccess ? describe : describe.skip;
 
-describe('End-to-end filename processing', () => {
+describeIfDrive('End-to-end filename processing', () => {
   const gpxFilesDir = path.join(__dirname, '../gpx-files-end-to-end');
   const tracesFilePath = path.join(__dirname, '../traces-end-to-end/traces.json');
 
