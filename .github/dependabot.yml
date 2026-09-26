@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Enable version updates for npm
+  # npm dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -8,15 +8,34 @@ updates:
       # Run at 4:00 AM on Monday, 5 hours before deployment
       time: "04:00"
       day: "monday"
-    # Raise pull requests for version updates against the `main` branch
     target-branch: "main"
-    # Labels on pull requests
     labels:
       - "dependencies"
-    # Allow up to 10 open pull requests for npm dependencies
-    open-pull-requests-limit: 10
-    # Configure update preferences
-    ignore:
-      # Ignore patch updates by default - focus on minor and major updates
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]
+    open-pull-requests-limit: 5
+    # Group updates so that a single PR touches package-lock.json each week,
+    # instead of many PRs conflicting with each other.
+    # Major updates keep their own PR, so a breaking change is easy to spot.
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  # Keep GitHub Actions versions up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

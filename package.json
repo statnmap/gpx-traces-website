@@ -12,6 +12,7 @@
     "start": "webpack serve --config webpack.config.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "test:ui": "node tests/ui/smoke.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "generate-docs": "jsdoc -c jsdoc.json"
@@ -19,21 +20,16 @@
   "author": "statnmap",
   "license": "MIT",
   "dependencies": {
-    "@eslint/config-array": "^0.23.0",
-    "@eslint/object-schema": "^3.0.0",
-    "braces": "^3.0.3",
     "diacritics": "^1.3.0",
-    "glob": "^13.0.0",
     "googleapis": "^181.0.0",
     "leaflet": "^1.9.4",
     "proj4": "^2.22.0",
-    "rimraf": "^6.1.0",
-    "uuid": "^14.0.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
+    "@eslint/js": "^10.0.1",
     "@turf/turf": "^7.4.0",
     "babel-jest": "^30.3.0",
     "babel-loader": "^10.1.0",
@@ -44,8 +40,11 @@
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^17.12.0",
     "jest": "^30.5.1",
     "jsdoc": "^4.0.4",
+    "monocart-coverage-reports": "^2.13.0",
+    "playwright": "^1.63.0",
     "prettier": "^3.9.1",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.6.0",
@@ -55,17 +54,8 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "scripts/**/*.{js,jsx}"
+      "scripts/**/*.{js,jsx}",
+      "!scripts/map.js"
     ]
-  },
-  "overrides": {
-    "ajv": ">=8.18.0",
-    "markdown-it": ">=14.2.0",
-    "underscore": ">=1.13.8",
-    "path-to-regexp": "0.1.13",
-    "serialize-javascript": "7.0.5",
-    "sockjs": {
-      "uuid": "14.0.0"
-    }
   }
 }

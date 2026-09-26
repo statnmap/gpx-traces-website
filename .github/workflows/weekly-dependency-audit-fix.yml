@@ -2,9 +2,13 @@ name: Weekly Dependency Audit Fix
 
 on:
   schedule:
-    # Run Monday at 05:00 UTC (adjust if you want another day/time)
+    # Run Monday at 05:00 UTC, after Dependabot (04:00) and before the deploy (09:00)
     - cron: '0 5 * * 1'
   workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   audit-fix:
@@ -13,34 +17,41 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      # Fixes transitive vulnerabilities in the lockfile only (no major bumps)
       - name: Run npm audit fix (lockfile-only)
-        run: |
-          set -e
-          npm audit fix --package-lock-only
+        run: npm audit fix --package-lock-only || echo "::warning::Some vulnerabilities could not be fixed automatically."
 
+      # PAT (not GITHUB_TOKEN) so that the PR triggers the `verify` check
       - name: Create PR if lockfile changed
-        uses: peter-evans/create-pull-request@v5
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_AUTO_MERGE }}
           commit-message: "chore: update lockfile with npm audit fix"
           title: "fix: update package-lock to resolve vulnerabilities"
           body: |
             This PR updates `package-lock.json` using `npm audit fix --package-lock-only`.
 
-            Run the full test suite on this PR before merging.
-          branch: "audit-fix-${{ github.run_id }}"
+            It is merged automatically once the `verify` check is green.
+          branch: chore/audit-fix
+          delete-branch: true
           base: main
           labels: dependencies
-          paths: |
+          add-paths: |
             package-lock.json
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.PAT_AUTO_MERGE }}
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-url }}"

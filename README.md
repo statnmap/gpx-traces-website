@@ -215,6 +215,15 @@ webpack serve
 ```
 Stop the server by pressing `Ctrl + C` in the terminal.
 
+9. Run the UI smoke test on the built website (headless browser, no AI involved)
+```sh
+npx playwright install chromium  # once
+npm run test:ui
+```
+It checks that all traces of `traces.json` are drawn, that popups, GPX downloads, category filters and the GPS button work, and that the page raises no JavaScript error. It also runs in the `verify` check of every PR.
+
+Local secrets can be stored in a `.env` file (ignored by git) and loaded with `node --env-file=.env ...`.
+
 ## Creating GPX Files for Unit Tests and Storing Them on Google Drive
 
 To create the correct GPX files for unit tests and store them manually on the proper Google Drive, follow these steps:
@@ -224,6 +233,10 @@ To create the correct GPX files for unit tests and store them manually on the pr
 3. Upload the GPX files to the designated test folder on Google Drive.
 4. Find the ID of the test folder on Google Drive by navigating to the folder and copying the long string of characters after `folders/` in the URL.
 5. Create the `GOOGLE_DRIVE_FOLDER_ID_TEST` secret in your GitHub repository with the test folder ID as the value. Refer to the instructions in the `README.md` file for creating secrets.
+6. Regenerate the UI test data used when Google Drive is not available (Dependabot PRs):
+   ```sh
+   NODE_ENV=test node --env-file=.env -e "require('./scripts/process-gpx').processGpxFiles('tests/fixtures/site-data/gpx-files', 'tests/fixtures/site-data/traces.json')"
+   ```
 
 ## Code Quality and Style Enforcement
 

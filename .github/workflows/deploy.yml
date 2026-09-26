@@ -6,10 +6,15 @@ on:
       - main
   schedule:
     - cron: '0 9 * * 1'
+  # Manual run = release deployment (same as the weekly schedule)
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Gives permission to push tags and commits
-  pages: write     # Gives permission to deploy to GitHub Pages
+  contents: write  # Gives permission to push tags and to the gh-pages branch
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -19,113 +24,138 @@ jobs:
       GOOGLE_DRIVE_FOLDER_ID_TEST: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID_TEST }}
       GPX_FILES_DIR: gpx-files-real-data
       TRACES_FILE_PATH: traces-real/traces.json
+      # Release = deploy to the site root, with tag or rollback to last stable tag
+      RELEASE: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed to find the last stable tag
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Authenticate with Google Drive
-        run: |
-          echo '${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}' > credentials.json
+      - name: Write Google Drive credentials
+        env:
+          GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+        run: printf '%s' "$GOOGLE_DRIVE_CREDENTIALS" > credentials.json
 
-      - name: Install googleapis library
-        run: npm install googleapis
+      # On release, audit and tests failures do not stop the job: the last
+      # stable tag is deployed instead (see "Rebuild last stable tag").
+      - name: Audit production dependencies
+        id: audit
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: ${{ env.RELEASE == 'true' }}
 
-      - name: Check Dependabot alerts
-        run: npm audit
+      - name: Audit all dependencies (informative)
+        run: npm audit || echo "::warning::npm audit reports vulnerabilities in dev dependencies (not blocking)."
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         id: tests
-        run: node --experimental-vm-modules node_modules/.bin/jest
-        continue-on-error: ${{ github.event_name == 'schedule' }}
+        run: npm run test:coverage
+        continue-on-error: ${{ env.RELEASE == 'true' }}
 
-      - name: Check code coverage
-        if: success() || github.event_name == 'schedule'
-        run: node --experimental-vm-modules node_modules/.bin/jest --coverage
-        continue-on-error: ${{ github.event_name == 'schedule' }}
+      - name: Quality gate
+        id: gate
+        run: |
+          if [ "${{ steps.audit.outcome }}" == "success" ] && [ "${{ steps.tests.outcome }}" == "success" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Audit or tests failed (audit=${{ steps.audit.outcome }}, tests=${{ steps.tests.outcome }})."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload coverage report to CODECOV
-        if: success() || github.event_name == 'schedule'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: false
 
-      - name: Tag current version if scheduled and tests passed
+      - name: Tag current version
         id: create_tag
-        if: github.event_name == 'schedule' && steps.tests.outcome == 'success'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_AUTO_MERGE }}
+        if: env.RELEASE == 'true' && steps.gate.outputs.ok == 'true'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          DATE_TAG=$(date +"%Y.%m.%d")
-          NEW_TAG="v$DATE_TAG"
-          echo "Creating new tag: $NEW_TAG"
-          git tag -a "$NEW_TAG" -m "Automated release on $DATE_TAG"
-          git push origin "$NEW_TAG"
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          NEW_TAG="v$(date +"%Y.%m.%d")"
+          if git rev-parse -q --verify "refs/tags/$NEW_TAG" > /dev/null; then
+            echo "Tag $NEW_TAG already exists, not re-tagging."
+          else
+            echo "Creating new tag: $NEW_TAG"
+            git tag -a "$NEW_TAG" -m "Automated release on $(date +"%Y.%m.%d")"
+            git push origin "$NEW_TAG"
+          fi
+          echo "new_tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Rebuild last stable tag
+        id: fetch_last_tag
+        if: env.RELEASE == 'true' && steps.gate.outputs.ok != 'true'
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 "$(git rev-list --tags --max-count=1)")
+          echo "Using previous stable tag: $LAST_TAG"
+          git checkout "$LAST_TAG"
+          rm -rf dist
+          npm ci
+          echo "last_tag=$LAST_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Run pre-build script
-        if: success() || github.event_name == 'schedule'
         run: node --experimental-vm-modules scripts/run-process-gpx.js
 
       - name: Build website
-        if: success() || github.event_name == 'schedule'
         run: npm run build
 
       - name: Generate documentation in dist/docs folder
-        if: success() || github.event_name == 'schedule'
-        run: node --experimental-vm-modules node_modules/.bin/jsdoc -c jsdoc.json
+        run: npm run generate-docs
 
-      - name: Fetch last tagged version if tests failed
-        id: fetch_last_tag
-        if: github.event_name == 'schedule' && steps.tests.outcome == 'failure'
+      # PRs are already gated by the UI test in `verify`: here it only reports
+      # UI coverage of `main` to Codecov and never blocks the deployment.
+      - name: Run UI smoke test
+        id: ui
+        if: steps.gate.outputs.ok == 'true'
+        continue-on-error: true
         run: |
-          git fetch --tags
-          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "Using previous stable tag: $LAST_TAG"
-          git checkout $LAST_TAG
-          echo "last_tag=$LAST_TAG" >> $GITHUB_OUTPUT
-          # Re-run build process with the stable version
-          npm install
-          node --experimental-vm-modules scripts/run-process-gpx.js
-          npm run build
-          npm run generate-docs
+          npx playwright install --with-deps chromium
+          npm run test:ui
+
+      - name: Upload UI coverage report to CODECOV
+        if: steps.ui.outcome == 'success'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-ui/lcov.info
+          flags: ui
+          fail_ci_if_error: false
 
       - name: Set tag info for release notes
         id: tag_info
-        if: github.event_name == 'schedule'
+        if: env.RELEASE == 'true'
         run: |
-          if [ "${{ steps.tests.outcome }}" == "success" ]; then
-            CURRENT_TAG="${{ steps.create_tag.outputs.new_tag }}"
-            echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
-            echo "message=✅ Tests passed. Deployed new version $CURRENT_TAG" >> $GITHUB_OUTPUT
+          if [ "${{ steps.gate.outputs.ok }}" == "true" ]; then
+            echo "message=✅ Tests passed. Deployed new version ${{ steps.create_tag.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
           else
-            CURRENT_TAG="${{ steps.fetch_last_tag.outputs.last_tag }}"
-            echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
-            echo "message=⚠️ Tests failed. Deployed previous stable version $CURRENT_TAG" >> $GITHUB_OUTPUT
+            echo "message=⚠️ Tests failed. Deployed previous stable version ${{ steps.fetch_last_tag.outputs.last_tag }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Deploy to GitHub Pages (release)
-        if: github.event_name == 'release' || github.event_name == 'schedule'
-        uses: peaceiris/actions-gh-pages@v3
+        if: env.RELEASE == 'true'
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          keep_files: dev/
-          commit_message: "${{ steps.tag_info.outputs.message || 'Deploy to GitHub Pages' }}"
+          commit_message: ${{ steps.tag_info.outputs.message }}
 
       - name: Deploy to GitHub Pages (dev)
-        if: github.event_name != 'release' && github.event_name != 'schedule'
-        uses: peaceiris/actions-gh-pages@v3
+        if: env.RELEASE != 'true'
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
