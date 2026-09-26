@@ -2,8 +2,12 @@ jest.setTimeout(10000);
 
 process.env.NODE_ENV = 'test';
 
-const { getCategory, getCoordinates, processGpxFiles, simplifyCoordinates } = require('../scripts/process-gpx');
-const { google } = require('googleapis');
+const {
+  getCategory,
+  getCoordinates,
+  processGpxFiles,
+  simplifyCoordinates,
+} = require('../scripts/process-gpx');
 const fs = require('fs');
 const path = require('path');
 const { toBeCloseToCoordinates } = require('./customMatchers');
@@ -43,13 +47,16 @@ describe('getCoordinates', () => {
   test('returns correct coordinates', () => {
     const trkpts = [
       { $: { lat: '47.325', lon: '-1.736' } },
-      { $: { lat: '47.326', lon: '-1.737' } }
+      { $: { lat: '47.326', lon: '-1.737' } },
     ];
     const expectedCoordinates = [
       { lat: 47.325, lon: -1.736 },
-      { lat: 47.326, lon: -1.737 }
+      { lat: 47.326, lon: -1.737 },
     ];
-    expect(getCoordinates(trkpts)).toBeCloseToCoordinates(expectedCoordinates, 3);
+    expect(getCoordinates(trkpts)).toBeCloseToCoordinates(
+      expectedCoordinates,
+      3
+    );
   });
 });
 
@@ -58,13 +65,16 @@ describe('simplifyCoordinates', () => {
     const coordinates = [
       { lat: 47.325, lon: -1.736 },
       { lat: 47.3251, lon: -1.7361 },
-      { lat: 47.326, lon: -1.737 }
+      { lat: 47.326, lon: -1.737 },
     ];
     const expectedSimplifiedCoordinates = [
       { lat: 47.325, lon: -1.736 },
-      { lat: 47.326, lon: -1.737 }
+      { lat: 47.326, lon: -1.737 },
     ];
-    expect(simplifyCoordinates(coordinates)).toBeCloseToCoordinates(expectedSimplifiedCoordinates, 3);
+    expect(simplifyCoordinates(coordinates)).toBeCloseToCoordinates(
+      expectedSimplifiedCoordinates,
+      3
+    );
   });
 });
 
@@ -93,20 +103,28 @@ describeIfDrive('Google Drive integration', () => {
 
     // Check the trace 0
     expect(tracesJson.traces[0].name).toBe('Chemin boueux - La valinière');
-    expect(tracesJson.traces[0].sanitizedName).toBe('chemin_boueux___la_valiniere');
+    expect(tracesJson.traces[0].sanitizedName).toBe(
+      'chemin_boueux___la_valiniere'
+    );
     expect(tracesJson.traces[0].category).toBe('chemin_boueux');
-    expect(tracesJson.traces[0].coordinates).toBeCloseToCoordinates([
-      { lat: 47.325, lon: -1.736 },
-      { lat: 47.326, lon: -1.737 }
-    ], 3);
-    
+    expect(tracesJson.traces[0].coordinates).toBeCloseToCoordinates(
+      [
+        { lat: 47.325, lon: -1.736 },
+        { lat: 47.326, lon: -1.737 },
+      ],
+      3
+    );
+
     // Check the trace 1
     expect(tracesJson.traces[1].name).toBe('Sample Track');
     expect(tracesJson.traces[1].sanitizedName).toBe('sample_track');
     expect(tracesJson.traces[1].category).toBe('autres');
-    expect(tracesJson.traces[1].coordinates).toBeCloseToCoordinates([
-      { lat: 47.325, lon: -1.736 },
-      { lat: 47.326, lon: -1.737 }
-    ], 3);
+    expect(tracesJson.traces[1].coordinates).toBeCloseToCoordinates(
+      [
+        { lat: 47.325, lon: -1.736 },
+        { lat: 47.326, lon: -1.737 },
+      ],
+      3
+    );
   });
 });

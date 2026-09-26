@@ -17,12 +17,14 @@ function toBeCloseToCoordinates(received, expected, precision = 3) {
 
   if (pass) {
     return {
-      message: () => `expected ${received} not to be close to ${expected} with precision of ${precision} digits`,
+      message: () =>
+        `expected ${received} not to be close to ${expected} with precision of ${precision} digits`,
       pass: true,
     };
   } else {
     return {
-      message: () => `expected ${received} to be close to ${expected} with precision of ${precision} digits`,
+      message: () =>
+        `expected ${received} to be close to ${expected} with precision of ${precision} digits`,
       pass: false,
     };
   }

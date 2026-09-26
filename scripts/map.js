@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import xml2js from 'xml2js';
 import { getColor, getWeight } from './map-utils';
 
 /**
@@ -7,8 +6,10 @@ import { getColor, getWeight } from './map-utils';
  * @type {string}
  */
 const gpxFilesDir = process.env.GPX_FILES_DIR || 'gpx-files-real-data';
-const tracesFilePath = process.env.TRACES_FILE_PATH || 'traces-real/traces.json';
+const tracesFilePath =
+  process.env.TRACES_FILE_PATH || 'traces-real/traces.json';
 
+let map = null;
 let gpsMarker = null;
 
 /**
@@ -41,18 +42,25 @@ function initializeMap(gpxFilesDir, tracesFilePath) {
   const map = L.map('mapcontent').setView([47.325, -1.736], 11);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
   fetch(tracesFilePath)
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       const traces = data.traces;
       const traceLayers = {};
 
-      traces.forEach(trace => {
-        const coordinates = trace.coordinates.map(coord => [coord.lat, coord.lon]);
-        const polyline = L.polyline(coordinates, { color: getColor(trace.category), weight: getWeight(trace.category) }).addTo(map);
+      traces.forEach((trace) => {
+        const coordinates = trace.coordinates.map((coord) => [
+          coord.lat,
+          coord.lon,
+        ]);
+        const polyline = L.polyline(coordinates, {
+          color: getColor(trace.category),
+          weight: getWeight(trace.category),
+        }).addTo(map);
 
         polyline.on('click', (e) => {
           const popupContent = `
@@ -79,7 +87,10 @@ function initializeMap(gpxFilesDir, tracesFilePath) {
         });
 
         polyline.on('mouseout', () => {
-          polyline.setStyle({ color: getColor(trace.category), weight: getWeight(trace.category) });
+          polyline.setStyle({
+            color: getColor(trace.category),
+            weight: getWeight(trace.category),
+          });
         });
 
         polyline.on('touchstart', (e) => {
@@ -103,13 +114,13 @@ function initializeMap(gpxFilesDir, tracesFilePath) {
       });
 
       const checkboxes = document.querySelectorAll('input[name="category"]');
-      checkboxes.forEach(checkbox => {
+      checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('change', () => {
           const category = checkbox.value;
           if (checkbox.checked) {
-            traceLayers[category].forEach(layer => map.addLayer(layer));
+            traceLayers[category].forEach((layer) => map.addLayer(layer));
           } else {
-            traceLayers[category].forEach(layer => map.removeLayer(layer));
+            traceLayers[category].forEach((layer) => map.removeLayer(layer));
           }
         });
       });
@@ -147,21 +158,23 @@ function handleError(error) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const map = initializeMap(gpxFilesDir, tracesFilePath);
+  map = initializeMap(gpxFilesDir, tracesFilePath);
 
-  document.getElementById('add-gps-position').addEventListener('click', (event) => {
-    if (gpsMarker) {
-      removeCurrentPositionFromMap();
-      event.target.textContent = 'Afficher ma position GPS';
-    } else {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          addCurrentPositionToMap(position);
-          event.target.textContent = 'Masquer ma position GPS';
-        }, handleError);
+  document
+    .getElementById('add-gps-position')
+    .addEventListener('click', (event) => {
+      if (gpsMarker) {
+        removeCurrentPositionFromMap();
+        event.target.textContent = 'Afficher ma position GPS';
       } else {
-        alert('Geolocation is not supported by this browser.');
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            addCurrentPositionToMap(position);
+            event.target.textContent = 'Masquer ma position GPS';
+          }, handleError);
+        } else {
+          alert('Geolocation is not supported by this browser.');
+        }
       }
-    }
-  });
+    });
 });

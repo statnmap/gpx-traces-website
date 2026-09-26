@@ -18,7 +18,7 @@ const categories = ['parcours', 'chemin_boueux', 'chemin_inondable', 'danger'];
  */
 const auth = new google.auth.GoogleAuth({
   keyFile: path.join(__dirname, '../credentials.json'),
-  scopes: ['https://www.googleapis.com/auth/drive.readonly']
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
 });
 
 /**
@@ -27,7 +27,7 @@ const auth = new google.auth.GoogleAuth({
  */
 const drive = google.drive({
   version: 'v3',
-  auth: auth
+  auth: auth,
 });
 
 /**
@@ -36,10 +36,13 @@ const drive = google.drive({
  */
 async function listGpxFiles() {
   console.log('Starting listGpxFile function');
-  const folderId = process.env.NODE_ENV === 'test' ? process.env.GOOGLE_DRIVE_FOLDER_ID_TEST : process.env.GOOGLE_DRIVE_FOLDER_ID;
+  const folderId =
+    process.env.NODE_ENV === 'test'
+      ? process.env.GOOGLE_DRIVE_FOLDER_ID_TEST
+      : process.env.GOOGLE_DRIVE_FOLDER_ID;
   const res = await drive.files.list({
     q: `'${folderId}' in parents and name contains '.gpx'`,
-    fields: 'files(id, name)'
+    fields: 'files(id, name)',
   });
   console.log('All files found:', res.data.files);
   return res.data.files;
@@ -54,24 +57,28 @@ async function listGpxFiles() {
  */
 async function downloadGpxFile(fileId, fileName, gpxFilesDir) {
   console.log('Starting downloadGpxFile:', fileName);
-  const res = await drive.files.get({
-    fileId: fileId,
-    alt: 'media'
-  }, { responseType: 'stream' });
+  const res = await drive.files.get(
+    {
+      fileId: fileId,
+      alt: 'media',
+    },
+    { responseType: 'stream' }
+  );
 
   return new Promise((resolve, reject) => {
     let data = '';
-    res.data.on('data', chunk => {
+    res.data.on('data', (chunk) => {
       data += chunk;
     });
     res.data.on('end', () => {
-      const sanitizedFileName = sanitizeFileName(path.basename(fileName, '.gpx')) + '.gpx';
+      const sanitizedFileName =
+        sanitizeFileName(path.basename(fileName, '.gpx')) + '.gpx';
       const filePath = path.join(gpxFilesDir, sanitizedFileName);
       ensureGpxFilesDirectoryExists(gpxFilesDir);
       fs.writeFileSync(filePath, data);
       resolve(filePath);
     });
-    res.data.on('error', err => {
+    res.data.on('error', (err) => {
       reject(err);
     });
   });
@@ -101,7 +108,6 @@ async function processGpxFiles(gpxFilesDir, tracesFilePath) {
     try {
       const filePath = await downloadGpxFile(file.id, file.name, gpxFilesDir);
       const gpxData = fs.readFileSync(filePath, 'utf8');
-      const sanitizedFileName = sanitizeFileName(path.basename(file.name, '.gpx')) + '.gpx';
 
       xml2js.parseString(gpxData, (err, result) => {
         if (err) {
@@ -112,8 +118,10 @@ async function processGpxFiles(gpxFilesDir, tracesFilePath) {
         const trace = {
           name: path.basename(file.name, '.gpx'),
           sanitizedName: sanitizeFileName(path.basename(file.name, '.gpx')),
-          category: getCategory(sanitizeFileName(path.basename(file.name, '.gpx'))),
-          coordinates: getCoordinates(result.gpx.trk[0].trkseg[0].trkpt)
+          category: getCategory(
+            sanitizeFileName(path.basename(file.name, '.gpx'))
+          ),
+          coordinates: getCoordinates(result.gpx.trk[0].trkseg[0].trkpt),
         };
 
         traces.push(trace);
@@ -135,7 +143,7 @@ async function processGpxFiles(gpxFilesDir, tracesFilePath) {
   const gpxFiles = fs.readdirSync(gpxFilesDir);
   console.log('GPX files in directory:', gpxFiles);
 
-  traces.forEach(trace => {
+  traces.forEach((trace) => {
     const filePath = path.join(gpxFilesDir, `${trace.sanitizedName}.gpx`);
     if (!fs.existsSync(filePath)) {
       console.error(`File not found: ${filePath}`);
@@ -151,9 +159,9 @@ async function processGpxFiles(gpxFilesDir, tracesFilePath) {
  */
 async function writeTracesJson(traces, tracesFilePath) {
   ensureDataDirectoryExists(tracesFilePath);
-    if (process.env.NODE_ENV === 'test') {
-      console.log('traces content before JSON', traces)
-    }
+  if (process.env.NODE_ENV === 'test') {
+    console.log('traces content before JSON', traces);
+  }
 
   return new Promise((resolve, reject) => {
     fs.writeFile(tracesFilePath, JSON.stringify({ traces }, null, 2), (err) => {
@@ -173,13 +181,19 @@ async function writeTracesJson(traces, tracesFilePath) {
  * @returns {string} The category of the trace.
  */
 function getCategory(sanitizedName) {
-  if (sanitizedName.startsWith("parcours")) {
+  if (sanitizedName.startsWith('parcours')) {
     return 'parcours';
-  } else if (sanitizedName.includes("chemin") && sanitizedName.includes("boueux")) {
+  } else if (
+    sanitizedName.includes('chemin') &&
+    sanitizedName.includes('boueux')
+  ) {
     return 'chemin_boueux';
-  } else if (sanitizedName.includes("chemin") && sanitizedName.includes("inondable")) {
+  } else if (
+    sanitizedName.includes('chemin') &&
+    sanitizedName.includes('inondable')
+  ) {
     return 'chemin_inondable';
-  } else if (sanitizedName.includes("danger")) {
+  } else if (sanitizedName.includes('danger')) {
     return 'danger';
   } else {
     for (const category of categories) {
@@ -199,7 +213,7 @@ function getCategory(sanitizedName) {
 function getCoordinates(trkpts) {
   const coordinates = trkpts.map((trkpt) => ({
     lat: parseFloat(trkpt.$.lat),
-    lon: parseFloat(trkpt.$.lon)
+    lon: parseFloat(trkpt.$.lon),
   }));
   return simplifyCoordinates(coordinates);
 }
@@ -211,10 +225,13 @@ function getCoordinates(trkpts) {
  */
 function simplifyCoordinates(coordinates) {
   // Define the Lambert-93 projection
-  const proj = '+proj=lcc +lat_1=44 +lat_2=49 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +datum=RGF93 +units=m +no_defs';
+  const proj =
+    '+proj=lcc +lat_1=44 +lat_2=49 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +datum=RGF93 +units=m +no_defs';
 
   // Convert geographic coordinates to projected coordinates
-  const projectedCoordinates = coordinates.map(coord => proj4(proj, [coord.lon, coord.lat]));
+  const projectedCoordinates = coordinates.map((coord) =>
+    proj4(proj, [coord.lon, coord.lat])
+  );
 
   // Create a line string with projected coordinates
   const line = turf.lineString(projectedCoordinates);
@@ -223,10 +240,15 @@ function simplifyCoordinates(coordinates) {
   const simplified = turf.simplify(line, { tolerance: 10, highQuality: true });
 
   // Convert simplified coordinates back to geographic coordinates
-  const simplifiedGeographic = simplified.geometry.coordinates.map(coord => proj4(proj, 'WGS84', coord));
+  const simplifiedGeographic = simplified.geometry.coordinates.map((coord) =>
+    proj4(proj, 'WGS84', coord)
+  );
 
   // Return the simplified coordinates in geographic format
-  return simplifiedGeographic.map(coord => ({ lat: coord[1], lon: coord[0] }));
+  return simplifiedGeographic.map((coord) => ({
+    lat: coord[1],
+    lon: coord[0],
+  }));
 }
 
 /**
@@ -267,5 +289,5 @@ module.exports = {
   processGpxFiles,
   getCategory,
   getCoordinates,
-  simplifyCoordinates
+  simplifyCoordinates,
 };
