@@ -13,6 +13,8 @@ const tracesFilePath =
 module.exports = {
   entry: './scripts/map.js',
   mode: 'production',
+  // Source maps let the UI smoke test report coverage on scripts/*.js
+  devtool: 'source-map',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),

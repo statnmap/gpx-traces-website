@@ -6,11 +6,15 @@
  * Checks that the map loads, that every trace of traces.json is drawn, that
  * popups, GPX downloads, category filters and the GPS button work, and that
  * the page raises no JavaScript error. Exits with code 1 on any failure.
+ *
+ * JavaScript coverage of scripts/*.js is written to coverage-ui/lcov.info
+ * (through the webpack source maps), to be uploaded to Codecov.
  */
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
+const MCR = require('monocart-coverage-reports');
 
 const distDir = path.resolve(__dirname, '../../dist');
 const tracesFilePath =
@@ -64,6 +68,24 @@ function serveDist() {
   );
 }
 
+/**
+ * Writes the coverage of the website scripts, mapped back to scripts/*.js.
+ * @param {Object[]} coverage - V8 coverage entries from Playwright.
+ */
+async function writeCoverage(coverage) {
+  const report = MCR({
+    name: 'UI smoke test coverage',
+    outputDir: path.resolve(__dirname, '../../coverage-ui'),
+    reports: ['lcovonly', 'console-summary'],
+    cleanCache: true,
+    entryFilter: (entry) => entry.url.endsWith('/main.js'),
+    sourceFilter: (sourcePath) => sourcePath.includes('scripts/'),
+    sourcePath: (filePath) => filePath.replace(/^.*?scripts\//, 'scripts/'),
+  });
+  await report.add(coverage);
+  await report.generate();
+}
+
 async function main() {
   const traces = JSON.parse(
     fs.readFileSync(path.join(distDir, tracesFilePath), 'utf8')
@@ -87,6 +109,7 @@ async function main() {
       permissions: ['geolocation'],
     });
     const page = await context.newPage();
+    await page.coverage.startJSCoverage({ resetOnNavigation: false });
 
     // Only errors of the website itself count: map tiles come from
     // openstreetmap.org and may be unavailable from CI.
@@ -192,6 +215,8 @@ async function main() {
       errors.length === 0,
       `No page error${errors.length ? `:\n    ${errors.join('\n    ')}` : ''}`
     );
+
+    await writeCoverage(await page.coverage.stopJSCoverage());
   } finally {
     await browser.close();
     server.close();

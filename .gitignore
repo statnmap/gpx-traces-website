@@ -5,3 +5,4 @@ dev/
 gpx-files-*/
 traces-*/
 dist/
+coverage-ui/

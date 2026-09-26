@@ -66,6 +66,8 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: unit
           fail_ci_if_error: false
 
       - name: Run pre-build script
@@ -87,6 +89,15 @@ jobs:
 
       - name: Run UI smoke test
         run: npm run test:ui
+
+      - name: Upload UI coverage report to CODECOV
+        if: steps.drive.outputs.available == 'true'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-ui/lcov.info
+          flags: ui
+          fail_ci_if_error: false
 
       - name: Generate documentation
         run: npm run generate-docs

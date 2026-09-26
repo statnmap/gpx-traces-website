@@ -76,6 +76,8 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: unit
           fail_ci_if_error: false
 
       - name: Tag current version
@@ -113,6 +115,25 @@ jobs:
 
       - name: Generate documentation in dist/docs folder
         run: npm run generate-docs
+
+      # PRs are already gated by the UI test in `verify`: here it only reports
+      # UI coverage of `main` to Codecov and never blocks the deployment.
+      - name: Run UI smoke test
+        id: ui
+        if: steps.gate.outputs.ok == 'true'
+        continue-on-error: true
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:ui
+
+      - name: Upload UI coverage report to CODECOV
+        if: steps.ui.outcome == 'success'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-ui/lcov.info
+          flags: ui
+          fail_ci_if_error: false
 
       - name: Set tag info for release notes
         id: tag_info
