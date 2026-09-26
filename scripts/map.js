@@ -1,4 +1,8 @@
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { getColor, getWeight } from './map-utils';
 
 /**
@@ -8,6 +12,13 @@ import { getColor, getWeight } from './map-utils';
 const gpxFilesDir = process.env.GPX_FILES_DIR || 'gpx-files-real-data';
 const tracesFilePath =
   process.env.TRACES_FILE_PATH || 'traces-real/traces.json';
+
+// Leaflet guesses marker image paths from its CSS, which fails once bundled
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
 
 let map = null;
 let gpsMarker = null;
@@ -116,11 +127,12 @@ function initializeMap(gpxFilesDir, tracesFilePath) {
       const checkboxes = document.querySelectorAll('input[name="category"]');
       checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('change', () => {
-          const category = checkbox.value;
+          // A category can have no trace (e.g. no "autres" file on Drive)
+          const layers = traceLayers[checkbox.value] || [];
           if (checkbox.checked) {
-            traceLayers[category].forEach((layer) => map.addLayer(layer));
+            layers.forEach((layer) => map.addLayer(layer));
           } else {
-            traceLayers[category].forEach((layer) => map.removeLayer(layer));
+            layers.forEach((layer) => map.removeLayer(layer));
           }
         });
       });

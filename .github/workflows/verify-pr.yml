@@ -72,15 +72,21 @@ jobs:
         if: steps.drive.outputs.available == 'true'
         run: node --experimental-vm-modules scripts/run-process-gpx.js
 
-      - name: Use test GPX files as build data
+      - name: Use test data as build data
         if: steps.drive.outputs.available != 'true'
         run: |
           mkdir -p "$GPX_FILES_DIR" "$(dirname "$TRACES_FILE_PATH")"
-          cp test-gpx-files/*.gpx "$GPX_FILES_DIR/"
-          echo '{"traces":[]}' > "$TRACES_FILE_PATH"
+          cp tests/fixtures/site-data/gpx-files/*.gpx "$GPX_FILES_DIR/"
+          cp tests/fixtures/site-data/traces.json "$TRACES_FILE_PATH"
 
       - name: Build website
         run: npm run build
+
+      - name: Install browser for UI tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run UI smoke test
+        run: npm run test:ui
 
       - name: Generate documentation
         run: npm run generate-docs
