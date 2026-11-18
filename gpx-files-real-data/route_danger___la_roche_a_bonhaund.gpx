@@ -17,7 +17,7 @@
     <trkseg>
       <trkpt lat="47.298519" lon="-1.727496">
         <ele>72.8</ele>
-        <name>Impasse de la Roche M��re, Vigneux-de-Bretagne</name>
+        <name>Impasse de la Roche Mère, Vigneux-de-Bretagne</name>
         <extensions>
           <oa:locType>routingNode</oa:locType>
           <oa:address>{
