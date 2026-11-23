@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx version="1.1" creator="outdooractive - http://www.outdooractive.com" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:oa="http://www.outdooractive.com/GPX/Extensions/1">
+  <metadata>
+    <name>Chemin inondable - La Roche à La Babinière</name>
+    <author>
+      <name>Seb R - Communauté</name>
+    </author>
+    <link href="https://www.outdooractive.com/r/306869192"/>
+    <time>2024-12-18T15:02:43.860Z</time>
+    <extensions>
+      <oa:oaCategory>hikingTourTrail</oa:oaCategory>
+    </extensions>
+  </metadata>
+  <trk>
+    <name>Chemin inondable - La Roche à La Babinière</name>
+    <type>hikingTourTrail</type>
+    <trkseg>
+      <trkpt lat="47.300275" lon="-1.722818">
+        <ele>65.56037</ele>
+        <name>Impasse du Schiste, Vigneux-de-Bretagne</name>
+        <extensions>
+          <oa:address>{
+  &quot;title&quot; : &quot;Impasse du Schiste, Vigneux-de-Bretagne&quot;
+}</oa:address>
+        </extensions>
+      </trkpt>
+      <trkpt lat="47.299971" lon="-1.722946">
+        <ele>65.37906</ele>
+      </trkpt>
+      <trkpt lat="47.299359" lon="-1.722286">
+        <ele>66.54654</ele>
+      </trkpt>
+      <trkpt lat="47.299047" lon="-1.722273">
+        <ele>67.0727</ele>
+      </trkpt>
+      <trkpt lat="47.298105" lon="-1.723554">
+        <ele>68.52506</ele>
+      </trkpt>
+      <trkpt lat="47.297524" lon="-1.722243">
+        <ele>71.38796</ele>
+      </trkpt>
+      <trkpt lat="47.296514" lon="-1.72328">
+        <ele>72.77415</ele>
+      </trkpt>
+      <trkpt lat="47.295952" lon="-1.724602">
+        <ele>71.66187</ele>
+      </trkpt>
+      <trkpt lat="47.296038" lon="-1.725459">
+        <ele>72.10309</ele>
+        <name>Chemin de l&apos;Abreuvoir, Vigneux-de-Bretagne</name>
+        <extensions>
+          <oa:address>{
+  &quot;title&quot; : &quot;Chemin de l&apos;Abreuvoir, Vigneux-de-Bretagne&quot;
+}</oa:address>
+        </extensions>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
