@@ -13,15 +13,9 @@ const fs = require('fs');
 const path = require('path');
 const { toBeCloseToCoordinates } = require('./customMatchers');
 const { expectTestTraces } = require('./driveTestData');
+const { useDriveForTests } = require('./driveMock');
 
 expect.extend({ toBeCloseToCoordinates });
-
-// Google Drive tests need credentials.json and a test folder id. They are not
-// available on Dependabot PRs, so skip instead of failing.
-const hasDriveAccess =
-  fs.existsSync(path.join(__dirname, '../credentials.json')) &&
-  Boolean(process.env.GOOGLE_DRIVE_FOLDER_ID_TEST);
-const describeIfDrive = hasDriveAccess ? describe : describe.skip;
 
 describe('getCategory', () => {
   test('returns correct category for parcours', () => {
@@ -102,9 +96,12 @@ describe('simplifyCoordinates', () => {
   });
 });
 
-describeIfDrive('Google Drive integration', () => {
+describe('Google Drive integration', () => {
   const gpxFilesDir = path.join(__dirname, '../gpx-files-process');
   const tracesFilePath = path.join(__dirname, '../traces-process/traces.json');
+
+  // Mocked Google Drive, except when DRIVE_LIVE=true (monthly workflow)
+  beforeAll(useDriveForTests);
 
   afterAll(() => {
     // Clean up the gpx-files directory and traces.json file
