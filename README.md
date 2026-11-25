@@ -135,7 +135,11 @@ To add a new GPX file, follow these steps:
 
 The repository is configured to use GitHub Actions to build and deploy the website. The pre-build script is included in the build process to process the GPX files and update the JSON file whenever new GPX files are added or existing ones are modified.
 
-The static website is hosted on GitHub Pages. The repository is configured to automatically build and deploy the website using GitHub Actions whenever changes are made to the GPX files or the codebase.
+The static website is hosted on GitHub Pages. To limit the use of the Google Drive API, the website is **only deployed on demand** (see below). Pull requests and other workflows never call Google Drive: the unit tests use a mocked Drive client (`tests/driveMock.js`, serving `test-gpx-files/`) and the PR build uses `tests/fixtures/site-data`. The real Drive test folder is checked once a month by the `Google Drive integration (monthly)` workflow, which runs the tests with `DRIVE_LIVE=true`. You can do the same locally with `credentials.json` and `GOOGLE_DRIVE_FOLDER_ID_TEST` set:
+
+```sh
+DRIVE_LIVE=true npm test
+```
 
 To add your current GPS position on the map when using a smartphone, follow these steps:
 
@@ -305,9 +309,9 @@ The `getCoordinates` function in the `scripts/process-gpx.js` file was updated t
 
 Unit tests were added in the `tests/process-gpx.test.js` file to verify the simplification logic.
 
-## Cron Job for Deploying Last Tagged Version
+## Deploying a Release
 
-The deploy workflow publishes a release to GitHub Pages every Monday at 9:07 UTC and every Wednesday at 10:07 UTC (12:07 in France in summer, 11:07 in winter), with fresh GPX files from Google Drive. If the production audit and the tests pass, the current version is tagged (`vYYYY.MM.DD`) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed. A release can also be started manually from the Actions tab (Deploy > Run workflow). Each push on `main` deploys to the `dev/` folder only.
+The website is deployed only on demand, from the Actions tab (Deploy > Run workflow), with fresh GPX files from Google Drive. There is no scheduled deployment and merging to `main` does not deploy. If the production audit and the tests pass, the current version is tagged (`vYYYY.MM.DD`) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed.
 
 ## License
 

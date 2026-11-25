@@ -13,22 +13,34 @@ const proj4 = require('proj4');
 const categories = ['parcours', 'chemin_boueux', 'chemin_inondable', 'danger'];
 
 /**
- * The Google Auth object for authentication with Google Drive.
- * @type {google.auth.GoogleAuth}
+ * The Google Drive client, created on first use (so that tests can inject a mock
+ * and never need credentials).
+ * @type {import('googleapis').drive_v3.Drive|undefined}
  */
-const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, '../credentials.json'),
-  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-});
+let driveClient;
 
 /**
- * The Google Drive object for interacting with the Google Drive API.
- * @type {google.drive}
+ * Returns the Google Drive client, creating the real one if none was injected.
+ * @returns {import('googleapis').drive_v3.Drive} The Google Drive client.
  */
-const drive = google.drive({
-  version: 'v3',
-  auth: auth,
-});
+function getDrive() {
+  if (!driveClient) {
+    const auth = new google.auth.GoogleAuth({
+      keyFile: path.join(__dirname, '../credentials.json'),
+      scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    });
+    driveClient = google.drive({ version: 'v3', auth });
+  }
+  return driveClient;
+}
+
+/**
+ * Replaces the Google Drive client (used by tests to avoid calling the API).
+ * @param {Object|undefined} client - The client to use, or undefined to reset.
+ */
+function setDriveClient(client) {
+  driveClient = client;
+}
 
 /**
  * Lists the GPX files in the specified Google Drive folder.
@@ -40,7 +52,7 @@ async function listGpxFiles() {
     process.env.NODE_ENV === 'test'
       ? process.env.GOOGLE_DRIVE_FOLDER_ID_TEST
       : process.env.GOOGLE_DRIVE_FOLDER_ID;
-  const res = await drive.files.list({
+  const res = await getDrive().files.list({
     q: `'${folderId}' in parents and name contains '.gpx'`,
     fields: 'files(id, name)',
   });
@@ -57,7 +69,7 @@ async function listGpxFiles() {
  */
 async function downloadGpxFile(fileId, fileName, gpxFilesDir) {
   console.log('Starting downloadGpxFile:', fileName);
-  const res = await drive.files.get(
+  const res = await getDrive().files.get(
     {
       fileId: fileId,
       alt: 'media',
@@ -299,6 +311,7 @@ function cleanGpxFilesDirectory(gpxFilesDir) {
 }
 
 module.exports = {
+  setDriveClient,
   processGpxFiles,
   getCategory,
   getDistanceKm,

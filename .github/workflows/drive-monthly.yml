@@ -1,0 +1,38 @@
+name: Google Drive integration (monthly)
+
+# The only automatic run that calls the real Google Drive API (besides manual
+# deployments). PRs and other workflows use a mocked Drive client.
+on:
+  schedule:
+    - cron: '7 6 1 * *'  # 1st of the month, 06:07 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drive:
+    runs-on: ubuntu-latest
+    env:
+      DRIVE_LIVE: 'true'
+      GOOGLE_DRIVE_FOLDER_ID_TEST: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID_TEST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write Google Drive credentials
+        env:
+          GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+        run: printf '%s' "$GOOGLE_DRIVE_CREDENTIALS" > credentials.json
+
+      - name: Run tests against the real Google Drive test folder
+        run: npm test
