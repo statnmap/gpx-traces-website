@@ -256,20 +256,14 @@ npm run lint
 npm run format
 ```
 
-## GitHub Copilot Workflow Guide
+## Working with AI agents
 
-This project has a standardized GitHub Copilot workflow guide that defines best practices for using AI assistance in development. The guide helps ensure consistency, quality, and thoroughness when working with Copilot.
+AI agents (Claude Code, Copilot, Codex…) read [`AGENTS.md`](AGENTS.md) automatically. It points them to two Lean standards, written for humans and agents alike:
 
-The workflow guide covers:
-- Analysis Phase: Problem understanding and solution planning
-- Implementation Phase: Code writing and modification best practices
-- Verification Phase: Testing and quality assurance procedures
-- Finalization Phase: Documentation and preparation for commit
-- Pre-Commit Checklist: Steps to follow before finalizing changes
+- [Technical defect analysis](docs/standards/technical-defect-analysis.md): bugs, CI failures, broken pipelines;
+- [Code changes](docs/standards/code-changes.md): fixes and new features.
 
-To use the guide, simply tell Copilot: "Please follow our Copilot Workflow Guide when responding" at the beginning of a conversation. Copilot: "Please follow our Copilot Workflow Guide when responding" at the beginning of a conversation.
-
-For complete details, see the [Copilot Workflow Guide](docs/copilot-workflow-guide.md).
+Each standard gives an intention, typical mistakes and checkable key points, with their why and ✅ / ❌ examples. They replace the former "Copilot Workflow Guide" (a long list of questions, in git history). The story behind them: [Training an AI like a junior: my Lean standard, built mistake after mistake](https://statnmap.com/2026-11-21-training-an-ai-like-a-junior-with-a-lean-standard/).
 
 ## JavaScript Transpilation
 
