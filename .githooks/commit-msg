@@ -1,0 +1,87 @@
+#!/bin/bash
+# Vérification de sécurité du MESSAGE de commit (complément de pre-commit qui, lui, scanne le contenu).
+# Empêche d'écrire des données sensibles ou personnelles dans le message de commit.
+# Reçoit en $1 le chemin du fichier contenant le message.
+# Réglages (non secrets), lus dans l'environnement puis dans .env (jamais affichés) :
+#   RECETTE_ALLOWED_HOST_PATTERNS  motifs d'hôte à bloquer (défaut `preprod,pp-`)
+#   RECETTE_ALLOWED_EMAIL_DOMAINS  domaines d'email autorisés (défaut `anthropic.com`, pour le trailer Co-Authored-By)
+
+MSG_FILE="$1"
+[ -f "$MSG_FILE" ] || exit 0
+
+# Ignore les lignes de commentaire (git les retire de toute façon)
+MSG=$(grep -v '^#' "$MSG_FILE")
+[ -z "$MSG" ] && exit 0
+
+env_key() {
+  local key="$1" val
+  val="${!key}"
+  if [ -z "$val" ] && [ -f recette/.env ]; then
+    val=$(grep -E "^[[:space:]]*${key}=" recette/.env | head -1 | cut -d= -f2-)
+    val="${val%\"}"; val="${val#\"}"; val="${val%\'}"; val="${val#\'}"
+  fi
+  printf '%s' "$val"
+}
+
+list_to_regex() {
+  printf '%s' "$1" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' \
+    | sed 's/[].[\*^$(){}+?|]/\\&/g' | paste -sd'|' -
+}
+
+fail() {
+  echo "❌ ERREUR (commit-msg) : $1"
+  echo "   Le message de commit ne doit contenir aucune donnée sensible ou personnelle"
+  echo "   (secrets, n° de carte/CVV/OTP, login, URL d'environnement de test, email/nom de personne, identifiant interne)."
+  echo "   Reformulez : décrivez le *quoi* et le *pourquoi*, pas les données de test manipulées."
+  exit 1
+}
+
+# Clé API Anthropic
+echo "$MSG" | grep -qE 'sk-ant-[a-zA-Z0-9-]+' && fail "clé API Anthropic détectée"
+
+# Numéro de carte bancaire (16 chiffres)
+echo "$MSG" | grep -qE '\b[0-9]{16}\b' && fail "numéro de carte bancaire détecté"
+
+# URL d'un hôte d'environnement de test (motifs configurables)
+HOST_PATTERNS=$(env_key RECETTE_ALLOWED_HOST_PATTERNS)
+[ -z "$HOST_PATTERNS" ] && HOST_PATTERNS="preprod,pp-"
+HOST_REGEX=$(list_to_regex "$HOST_PATTERNS")
+[ -z "$HOST_REGEX" ] && HOST_REGEX='preprod|pp-'
+echo "$MSG" | grep -iqE 'https?://[a-zA-Z0-9._-]*('"$HOST_REGEX"')' && fail "URL d'environnement de test ($HOST_PATTERNS) détectée"
+# Motifs suffixes de domaine (contenant un point) : hôte complet, avec ou sans schéma
+DOT_PATTERNS=$(printf '%s' "$HOST_PATTERNS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep '\.' | paste -sd, -)
+if [ -n "$DOT_PATTERNS" ]; then
+  DOT_REGEX=$(list_to_regex "$DOT_PATTERNS")
+  echo "$MSG" | grep -iqE '([a-zA-Z0-9-]+\.)+('"$DOT_REGEX"')([^a-zA-Z0-9-]|$)' && fail "nom d'hôte complet d'un environnement ($DOT_PATTERNS) détecté"
+fi
+
+# UUID complet
+echo "$MSG" | grep -iqE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' && fail "UUID complet détecté"
+
+# Chemin utilisateur (/home/<username>/)
+echo "$MSG" | grep -qE '/home/[a-zA-Z0-9_-]+/' && fail "chemin utilisateur (/home/...) détecté"
+
+# Emails hors domaines autorisés (défaut anthropic.com : trailer Co-Authored-By ; RECETTE_ALLOWED_EMAIL_DOMAINS le remplace)
+EMAIL_DOMAINS=$(env_key RECETTE_ALLOWED_EMAIL_DOMAINS)
+[ -z "$EMAIL_DOMAINS" ] && EMAIL_DOMAINS="anthropic.com"
+EMAIL_ALLOWED=$(list_to_regex "$EMAIL_DOMAINS")
+EMAILS=$(echo "$MSG" | grep -oiE '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' | grep -viE '@('"$EMAIL_ALLOWED"')$')
+[ -n "$EMAILS" ] && fail "adresse email potentiellement personnelle détectée"
+
+# Valeurs secrètes de test — lues à la volée depuis .env local (jamais stocké ici)
+if [ -f recette/.env ]; then
+  while IFS='=' read -r key val; do
+    case "$key" in ''|\#*) continue ;; esac
+    case "$key" in RECETTE_ALLOWED_*|RECETTE_CI|RECETTE_HEADED|RECETTE_WINDOW_PORT) continue ;; esac
+    val="${val%\"}"; val="${val#\"}"; val="${val%\'}"; val="${val#\'}"
+    [ -z "$val" ] && continue
+    [ ${#val} -lt 4 ] && continue                  # ignore les valeurs trop courtes (ex. CVV 3 chiffres)
+    if printf '%s' "$val" | grep -qE '^[0-9]+$'; then
+      printf '%s' "$MSG" | grep -qwF -- "$val" && fail "valeur de $key (.env) détectée"
+    else
+      printf '%s' "$MSG" | grep -qF -- "$val" && fail "valeur de $key (.env) détectée"
+    fi
+  done < recette/.env
+fi
+
+exit 0

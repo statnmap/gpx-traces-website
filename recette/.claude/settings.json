@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run *)",
+      "Bash(node runner/run-recette.mjs*)",
+      "Bash(node scripts/*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)"
+    ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.*.local)",
+      "Read(./outputs/.auth/**)",
+      "Read(./.claude/settings.local.json)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Edit(./outputs/.auth/**)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.claude/settings.local.json)",
+      "Edit(./scripts/hooks/**)",
+      "Edit(./config/**/secrets*.md)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__playwright__browser_navigate|mcp__playwright__browser_tabs|mcp__claude-in-chrome__navigate|mcp__claude-in-chrome__tabs_create_mcp",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard-preprod.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

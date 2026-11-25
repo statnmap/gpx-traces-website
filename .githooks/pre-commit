@@ -1,0 +1,204 @@
+#!/bin/bash
+# Vérification de sécurité avant commit (nécessite : git config core.hooksPath .githooks — voir `npm run setup-hooks`).
+# Réglages (non secrets), lus dans l'environnement puis dans .env (jamais affichés) :
+#   RECETTE_ALLOWED_HOST_PATTERNS  motifs d'hôte à bloquer dans le contenu (liste séparée par des virgules, défaut `preprod,pp-`)
+#   RECETTE_ALLOWED_EMAIL_DOMAINS  domaines d'email tolérés dans le contenu (défaut : aucun — zéro tolérance)
+
+STAGED=$(git diff --cached --name-only)
+SAFE_FILES=$(git diff --cached --name-only | grep -vE '(example|^\.githooks/)')
+
+# Diff filtré — exclut les fichiers example et le hook lui-même pour éviter les faux positifs
+DIFF_SAFE=$(git diff --cached -- . ':(exclude)*example*' ':(exclude).githooks/*' 2>/dev/null)
+
+# Valeur d'une clé de réglage NON secrète : environnement d'abord, puis .env. Jamais d'affichage.
+env_key() {
+  local key="$1" val
+  val="${!key}"
+  if [ -z "$val" ] && [ -f recette/.env ]; then
+    val=$(grep -E "^[[:space:]]*${key}=" recette/.env | head -1 | cut -d= -f2-)
+    val="${val%\"}"; val="${val#\"}"; val="${val%\'}"; val="${val#\'}"
+  fi
+  printf '%s' "$val"
+}
+
+# Liste « a,b,c » → alternance ERE « a|b|c » (caractères spéciaux échappés)
+list_to_regex() {
+  printf '%s' "$1" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' \
+    | sed 's/[].[\*^$(){}+?|]/\\&/g' | paste -sd'|' -
+}
+
+# Affiche les lignes correspondant à un pattern avec le nom du fichier source
+# Usage : show_matches <grep_flags> <pattern>
+show_matches() {
+  local flags="$1"
+  local pattern="$2"
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    matches=$(git diff --cached -- "$file" | grep $flags '^\+.*'"$pattern")
+    if [ -n "$matches" ]; then
+      echo "   $file :"
+      echo "$matches" | sed 's/^/     /'
+    fi
+  done <<< "$SAFE_FILES"
+}
+
+# Bloquer les fichiers de secrets et de config locale (.env, .env.*, sessions, config MCP/perso) — .env.example reste commitable
+if echo "$STAGED" | grep -E '(^|/)\.env($|\.)|(^|/)\.mcp\.json$|(^|/)settings\.local\.json$|(^|/)\.auth/|(^|/)outputs/' | grep -vqE '(^|/)\.env\.example$' ; then
+  echo "❌ ERREUR : fichier de secrets / config locale / sortie générée stagé (.env*, .mcp.json, settings.local.json, .auth/, outputs/)"
+  echo "   Retirez-le avec : git reset HEAD <fichier>"
+  exit 1
+fi
+
+# Clé API Anthropic
+if echo "$DIFF_SAFE" | grep -qE '^\+.*sk-ant-[a-zA-Z0-9-]+'; then
+  echo "❌ ERREUR : Clé API Anthropic détectée dans les fichiers stagés"
+  show_matches "-E" 'sk-ant-[a-zA-Z0-9-]+'
+  exit 1
+fi
+
+# Numéros de carte bancaire (16 chiffres consécutifs)
+if echo "$DIFF_SAFE" | grep -qE '^\+.*\b[0-9]{16}\b'; then
+  echo "❌ ERREUR : Pattern de numéro de carte bancaire détecté dans les fichiers stagés"
+  show_matches "-E" '\b[0-9]{16}\b'
+  exit 1
+fi
+
+# Valeurs secrètes de test (toutes les variables du .env : login, mot de passe, URL...).
+# Lues à la volée depuis .env local (jamais stockées dans ce hook). Bloque tout ajout stagé contenant l'une de
+# ces valeurs réelles. Les réglages non secrets (motifs d'hôte, domaines d'email, drapeaux) sont ignorés.
+SECRET_ADDITIONS=$(echo "$DIFF_SAFE" | grep '^\+')
+if [ -n "$SECRET_ADDITIONS" ] && [ -f recette/.env ]; then
+  while IFS='=' read -r key val; do
+    case "$key" in ''|\#*) continue ;; esac           # ignore lignes vides / commentaires
+    case "$key" in RECETTE_ALLOWED_*|RECETTE_CI|RECETTE_HEADED|RECETTE_WINDOW_PORT) continue ;; esac
+    val="${val%\"}"; val="${val#\"}"; val="${val%\'}"; val="${val#\'}"
+    [ -z "$val" ] && continue
+    [ ${#val} -lt 4 ] && continue                     # ignore les valeurs trop courtes (ex. CVV 3 chiffres)
+    # valeur numérique → match mot entier (évite les faux positifs type 12345) ; sinon littéral
+    if printf '%s' "$val" | grep -qE '^[0-9]+$'; then
+      FOUND=$(printf '%s' "$SECRET_ADDITIONS" | grep -wF -- "$val")
+    else
+      FOUND=$(printf '%s' "$SECRET_ADDITIONS" | grep -F -- "$val")
+    fi
+    if [ -n "$FOUND" ]; then
+      echo "❌ ERREUR : valeur de $key (.env) détectée dans les fichiers stagés"
+      echo "   Ces valeurs ne doivent jamais être commitées — laissez-les uniquement dans .env"
+      exit 1
+    fi
+  done < recette/.env
+fi
+
+# --- Garde-fou renforcé spécifique à tests/ et runner/ (code de recette versionné, zéro tolérance) ---
+TESTS_STAGED=$(echo "$SAFE_FILES" | grep -E '^recette/(tests|runner)/')
+if [ -n "$TESTS_STAGED" ]; then
+  TESTS_DIFF=$(git diff --cached -- recette/tests/ recette/runner/ 2>/dev/null)
+
+  # Import direct des fichiers de secrets/site — doit toujours passer par tests/shared/load-test-config.js
+  DIRECT_CONFIG_IMPORT=$(echo "$TESTS_DIFF" | grep -E "^\+.*(from|require)\s*\(?[\"'].*config/([a-z]+/)?(secrets|site)")
+  if [ -n "$DIRECT_CONFIG_IMPORT" ]; then
+    echo "❌ ERREUR : import direct de config/*/secrets* ou config/*/site* détecté dans tests/ ou runner/"
+    echo "   Passez toujours par tests/shared/load-test-config.js — jamais de lecture directe des fichiers de secrets"
+    show_matches "-E" "(from|require)\s*\(?[\"'].*config/([a-z]+/)?(secrets|site)"
+    exit 1
+  fi
+fi
+
+# URLs / domaines d'environnements autorisés (RECETTE_ALLOWED_HOST_PATTERNS, défaut preprod,pp-) — détecte aussi
+# les mentions sans "https://" et les URLs avec identifiants intercalés. Exclut les placeholders (<url-...>, "...")
+# et les extensions de fichier via une liste de TLD réels.
+HOST_PATTERNS=$(env_key RECETTE_ALLOWED_HOST_PATTERNS)
+[ -z "$HOST_PATTERNS" ] && HOST_PATTERNS="preprod,pp-"
+HOST_REGEX=$(list_to_regex "$HOST_PATTERNS")
+[ -z "$HOST_REGEX" ] && HOST_REGEX='preprod|pp-'
+HOST_TLD='(com|fr|net|org|io|co|eu|app|dev)'
+HOST_URL_MATCHES=$(echo "$DIFF_SAFE" | grep -iE '^\+.*('"$HOST_REGEX"')[a-zA-Z0-9._-]*\.'"$HOST_TLD"'\b' | grep -vE '\.\.\.|<url-|https?://[^[:space:]]*\[')
+if [ -n "$HOST_URL_MATCHES" ]; then
+  echo "❌ ERREUR : URL/domaine d'environnement de test (motifs : $HOST_PATTERNS) détecté dans les fichiers stagés"
+  echo "   Les URLs vivent dans .env (non commité) — utilisez une référence « voir .env, variable RECETTE_... » ou un placeholder"
+  show_matches "-iE" '('"$HOST_REGEX"')[a-zA-Z0-9._-]*\.'"$HOST_TLD"'\b'
+  exit 1
+fi
+
+# Motifs qui sont des SUFFIXES de domaine (ex. `exemple.site`) : l'hôte complet (`demo-abc.exemple.site`) porte des
+# libellés AVANT le motif, avec ou sans schéma, et sans TLD de la liste ci-dessus. Le motif seul (sans libellé devant)
+# reste autorisé : c'est ainsi qu'on le documente.
+DOT_PATTERNS=$(printf '%s' "$HOST_PATTERNS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep '\.' | paste -sd, -)
+if [ -n "$DOT_PATTERNS" ]; then
+  DOT_REGEX=$(list_to_regex "$DOT_PATTERNS")
+  FULL_HOST_REGEX='([a-zA-Z0-9-]+\.)+('"$DOT_REGEX"')([^a-zA-Z0-9-]|$)'
+  FULL_HOST_MATCHES=$(echo "$DIFF_SAFE" | grep -iE '^\+.*'"$FULL_HOST_REGEX" | grep -vE '\.\.\.|<url-')
+  if [ -n "$FULL_HOST_MATCHES" ]; then
+    echo "❌ ERREUR : nom d'hôte complet d'un environnement (motifs : $DOT_PATTERNS) détecté dans les fichiers stagés"
+    echo "   Le nom d'hôte est une donnée d'environnement : il vit dans .env (non commité), jamais dans un fichier commité"
+    show_matches "-iE" "$FULL_HOST_REGEX"
+    exit 1
+  fi
+fi
+
+# UUID complets (identifiant interne réel : article, auteur, projet... — exclut les placeholders
+# {uuid}/{projectId} et les valeurs tronquées avec ...)
+UUID_MATCHES=$(echo "$DIFF_SAFE" | grep -iE '^\+.*[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | grep -vE '\.\.\.|\{')
+if [ -n "$UUID_MATCHES" ]; then
+  echo "❌ ERREUR : UUID complet détecté dans les fichiers stagés"
+  echo "   Un UUID (article, auteur, projet...) est un identifiant interne réel — même consultable depuis"
+  echo "   le back-office, il ne doit jamais être commité. Utilisez un placeholder ({uuid}) ou tronquez"
+  echo "   (ex : 0196ecaf-...) — conservez la valeur complète uniquement dans outputs/ (gitignoré)."
+  show_matches "-iE" '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+  exit 1
+fi
+
+# Chemins absolus propres à un poste — Linux (/home/<user>/), macOS (/Users/<user>/) et Windows
+# (lettre de lecteur suivie de : et \ ou /, ex. C:\Users\... ou C:/Users/...). Détection texte, pas
+# besoin d'exécuter sur l'OS en question.
+USER_PATH_PATTERN='(/home/[a-zA-Z0-9_-]+/|/Users/[a-zA-Z0-9_.-]+/|\b[A-Za-z]:[\\/])'
+if echo "$DIFF_SAFE" | grep -qE '^\+.*'"$USER_PATH_PATTERN"; then
+  echo "❌ ERREUR : Chemin absolu propre à un poste détecté dans les fichiers stagés"
+  echo "   (Linux /home/..., macOS /Users/..., ou Windows C:\\... / C:/...)"
+  echo "   Remplacez par un chemin relatif, \$HOME/%USERPROFILE%, ou une résolution dynamique (cwd, import.meta.url)"
+  show_matches "-E" "$USER_PATH_PATTERN"
+  exit 1
+fi
+
+# Adresse email (format générique) — contrôle global sur tout le contenu stagé, zéro tolérance : aucune
+# adresse réelle ne doit être commitée. Exclus : domaines manifestement fictifs, plus les domaines listés dans
+# RECETTE_ALLOWED_EMAIL_DOMAINS (vide par défaut).
+EMAIL_ALLOWED=$(list_to_regex "$(env_key RECETTE_ALLOWED_EMAIL_DOMAINS)")
+EMAIL_EXCLUDE='@(example\.(com|org|net)|test\.local|localhost'"${EMAIL_ALLOWED:+|$EMAIL_ALLOWED}"')([^A-Za-z0-9_-]|$)'
+EMAIL_GLOBAL_MATCHES=$(echo "$DIFF_SAFE" | grep -iE '^\+.*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' | grep -viE "$EMAIL_EXCLUDE")
+if [ -n "$EMAIL_GLOBAL_MATCHES" ]; then
+  echo "❌ ERREUR : adresse email détectée dans les fichiers stagés"
+  echo "   Aucune adresse email réelle ne doit être commitée (domaines tolérables : RECETTE_ALLOWED_EMAIL_DOMAINS)."
+  show_matches "-iE" '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+  exit 1
+fi
+
+# Fallbacks de credentials en dur (ex: password ?? 'monmotdepasse')
+HARDCODED_CRED=$(echo "$DIFF_SAFE" | grep -iE '^\+.*(password|username|login|secret|token|credential)' | grep -E "\?\?[[:space:]]*'[^']+'")
+if [ -n "$HARDCODED_CRED" ]; then
+  echo "❌ ERREUR : Fallback de credential en dur détecté dans les fichiers stagés"
+  echo "   Pattern : (password|login|...) ?? 'valeur_en_dur'"
+  echo "   Utilisez une variable d'env (.env, non commité)"
+  echo "$HARDCODED_CRED" | sed 's/^/   /'
+  exit 1
+fi
+
+# Identifiants littéraux dans le code (ex: httpCredentials: { username: 'x', password: 'y' }) : le contrôle précédent ne voit
+# que les replis `?? 'valeur'`. Une valeur volontairement fausse (test de refus de connexion) s'exempte avec le commentaire
+# `hook-allow-literal` sur la même ligne. La valeur est masquée dans le message.
+LITERAL_CRED=$(echo "$DIFF_SAFE" | grep -iE "^\+.*(password|passwd|pwd|username|login)[A-Za-z_]*['\"]?[[:space:]]*[:=][[:space:]]*['\"][^'\"[:space:]]{3,}['\"]" | grep -viE "process\.env|<[^>]*>|votre|example|placeholder|\.\.\.|\*\*\*|hook-allow-literal|'(password|username|login)'|\"(password|username|login)\"")
+if [ -n "$LITERAL_CRED" ]; then
+  echo "❌ ERREUR : identifiant ou mot de passe littéral détecté dans les fichiers stagés"
+  echo "   Pattern : username|password|login: 'valeur_en_dur'"
+  echo "   Utilisez une variable d'env (.env, non commité) ou le chargeur de configuration du dossier"
+  echo "   Mot de passe volontairement faux dans un test de refus : ajouter « hook-allow-literal » en commentaire sur la ligne"
+  echo "$LITERAL_CRED" | sed -E "s/(password|passwd|pwd|username|login)([A-Za-z_]*['\"]?[[:space:]]*[:=][[:space:]]*)['\"][^'\"]*['\"]/\1\2'***'/Ig" | sed 's/^/   /'
+  exit 1
+fi
+
+# Corruption par remplacement de texte (début de fichier copié plus bas) : voir scripts/hooks/check-doublon-entete.mjs
+if ! node "$(git rev-parse --show-toplevel)/recette/scripts/hooks/check-doublon-entete.mjs"; then
+  exit 1
+fi
+
+echo "✅ Vérification de sécurité passée"
+exit 0

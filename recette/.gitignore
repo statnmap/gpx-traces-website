@@ -1,0 +1,26 @@
+node_modules/
+
+# Secrets — NE JAMAIS COMMITTER (.env.example, lui, est commité : toutes ses valeurs sont vides)
+.env
+.env.*
+!.env.example
+
+# Config perso (chemins locaux, non committable)
+.claude/settings.local.json
+.mcp.json
+
+# Sorties générées : rapports, contextes de heal, captures, sessions authentifiées (outputs/.auth/)
+outputs/
+.auth/
+
+# Playwright
+.playwright/
+.playwright-mcp/
+test-results/
+
+.DS_Store
+*.log
+
+# Specs éphémères (SC-RT-NNN) : jamais commitées, rejouées avec --ephemeres
+tests/web/scenarios/*-RT-*.spec.js
+!tests/web/scenarios/*.example.spec.js
