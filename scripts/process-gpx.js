@@ -15,13 +15,13 @@ const categories = ['parcours', 'chemin_boueux', 'chemin_inondable', 'danger'];
 /**
  * The Google Drive client, created on first use (so that tests can inject a mock
  * and never need credentials).
- * @type {import('googleapis').drive_v3.Drive|undefined}
+ * @type {Object|undefined}
  */
 let driveClient;
 
 /**
  * Returns the Google Drive client, creating the real one if none was injected.
- * @returns {import('googleapis').drive_v3.Drive} The Google Drive client.
+ * @returns {Object} The Google Drive client.
  */
 function getDrive() {
   if (!driveClient) {
