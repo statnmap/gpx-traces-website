@@ -1,0 +1,22 @@
+{
+  "name": "recette-parcours",
+  "version": "1.0.0",
+  "description": "Recette fonctionnelle web (front) déterministe : Playwright + heal ciblé par Claude Code",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "recette": "node runner/run-recette.mjs",
+    "list": "node runner/run-recette.mjs --list",
+    "rapport:html": "node scripts/md-to-html.mjs",
+    "test": "node --test tests/shared/text-match.test.js tests/web/lib/bo-session.test.js",
+    "setup-hooks": "git -C .. config core.hooksPath .githooks && chmod +x ../.githooks/*",
+    "install:browsers": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "playwright": "^1.62.0"
+  }
+}

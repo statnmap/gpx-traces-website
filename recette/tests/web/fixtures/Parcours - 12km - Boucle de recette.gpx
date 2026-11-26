@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="recette" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Parcours - 12km - Boucle de recette</name>
+    <trkseg>
+      <trkpt lat="47.3100" lon="-1.7200"><ele>20</ele></trkpt>
+      <trkpt lat="47.3130" lon="-1.7150"><ele>22</ele></trkpt>
+      <trkpt lat="47.3170" lon="-1.7120"><ele>25</ele></trkpt>
+      <trkpt lat="47.3210" lon="-1.7130"><ele>24</ele></trkpt>
+      <trkpt lat="47.3240" lon="-1.7180"><ele>21</ele></trkpt>
+      <trkpt lat="47.3220" lon="-1.7240"><ele>19</ele></trkpt>
+      <trkpt lat="47.3170" lon="-1.7270"><ele>18</ele></trkpt>
+      <trkpt lat="47.3130" lon="-1.7250"><ele>20</ele></trkpt>
+      <trkpt lat="47.3100" lon="-1.7200"><ele>20</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

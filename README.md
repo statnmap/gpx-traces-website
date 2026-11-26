@@ -265,6 +265,12 @@ AI agents (Claude Code, Copilot, Codex…) read [`AGENTS.md`](AGENTS.md) automat
 
 Each standard gives an intention, typical mistakes and checkable key points, with their why and ✅ / ❌ examples. They replace the former "Copilot Workflow Guide" (a long list of questions, in git history). The story behind them: [Training an AI like a junior: my Lean standard, built mistake after mistake](https://statnmap.com/2026-11-21-training-an-ai-like-a-junior-with-a-lean-standard/).
 
+## Testing user journeys
+
+When developing on the project, user journeys (browsing the map on desktop and smartphone, downloading a GPX file, publishing a new trace) can be checked with a single command, from [Claude Code](https://claude.com/claude-code): `/recette-parcours`. It plays the journeys of the [`recette/`](recette/README.md) folder, as an end user would, and writes a report in `recette/outputs/reports/` (not versioned). To add or change a journey, follow [the journey standard](recette/docs-agent/standard-parcours.md).
+
+This complements the unit tests (`npm test`) and the UI smoke test (`npm run test:ui`), and may partly duplicate them on purpose.
+
 ## JavaScript Transpilation
 
 The project uses Babel for JavaScript transpilation. Babel allows the use of modern JavaScript features by converting the code into a compatible version that can run in older browsers.
