@@ -184,3 +184,25 @@ distance « 10 km et plus », puis la recocher.
 **Résultat attendu** : la nouvelle trace est rangée dans les parcours « 10 km et plus » : elle disparaît quand cette distance est
 décochée et réapparaît quand elle est recochée ; elle n'est pas rangée dans une autre catégorie.
 **Si c'est faux** : le parcours est introuvable pour qui filtre sur sa distance, ou apparaît parmi des chemins qui ne sont pas des parcours.
+
+---
+
+## [SC-014] Fichier de traces indisponible (ordinateur)
+**Priorité** : moyenne
+**Catégorie** : indisponibilité
+
+Ouvrir la page d'accueil alors que le fichier de traces ne peut pas être chargé (requête en échec dans le navigateur de la recette).
+
+**Résultat attendu** : la carte reste affichée, sans trace, et un message explique à la personne que les traces sont indisponibles.
+**Si c'est faux** : la personne voit une carte vide sans explication, croit qu'il n'existe aucune trace près de chez elle et renonce, au lieu de réessayer plus tard.
+
+---
+
+## [SC-015] Localisation refusée (ordinateur)
+**Priorité** : moyenne
+**Catégorie** : carte
+
+Cliquer sur « Afficher ma position GPS » alors que le navigateur refuse la localisation (refus simulé sur la page).
+
+**Résultat attendu** : la personne est informée que sa position n'est pas disponible ; le bouton n'annonce pas une position affichée alors qu'aucun repère n'est sur la carte.
+**Si c'est faux** : la personne clique, rien ne se passe, et elle ne sait pas si le site est en panne ou si elle doit autoriser la localisation.
