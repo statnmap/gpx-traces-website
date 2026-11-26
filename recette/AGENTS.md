@@ -58,6 +58,11 @@ anormale. Le hook `pre-commit` bloque un début de fichier `.md` répété.
 
 ## Fonctionnement de la recette
 
+- **Jamais le code de l'application pour définir un scénario** : la recette se place comme les spécifications utilisateur. Un
+  scénario, un parcours ou un point de contrôle se déduit de la demande, de `doc/` et de ce que montre le site, jamais du code
+  source à la racine du dépôt (`../scripts/`, `../index.html`, `../styles.css`, `../tests/`…). Pourquoi : un scénario tiré du
+  code vérifie ce que le code fait, pas ce que l'utilisateur attend. Les sélecteurs se lisent sur la page affichée ; seul
+  l'outillage du site local (`tests/web/lib/local-site.js`) s'appuie sur l'application, pour la construire et la servir.
 - **Claude lance le runner lui-même** (`node runner/run-recette.mjs ...` via l'outil Bash) ; on n'impose jamais `node`/`npm`
   en direct à l'utilisateur.
 - **Jamais deux runners en même temps** : le runner pose un verrou (`outputs/heal/.lock_<scope>.json`, code de sortie 3 si
