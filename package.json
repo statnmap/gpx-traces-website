@@ -53,6 +53,10 @@
     "webpack-dev-server": "^6.0.0"
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/recette/"
+    ],
     "collectCoverageFrom": [
       "scripts/**/*.{js,jsx}",
       "!scripts/map.js"
