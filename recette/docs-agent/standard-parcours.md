@@ -57,6 +57,18 @@ Exemples :
 - Le lien de téléchargement ne suffit pas : le fichier reçu est un GPX exploitable et son premier point est le début de la trace affichée (SC-010).
 - Les cases de distance ne se jugent pas à l'œil : le nombre de traces masquées est comparé au fichier de traces (SC-005).
 
+### ✅ La page se vérifie telle qu'on la lit, pas seulement telle qu'elle fonctionne
+
+*Une fonctionnalité présente mais pénible à lire ou mal alignée fait douter l'utilisateur de tout le reste.*
+
+Question à se poser : « si je découvrais cette page, la lirais-je sans effort ? ». On regarde la page entière, à la taille de l'appareil
+visé, pas seulement l'élément ajouté.
+
+Exemples :
+
+- ✅ Textes lisibles, éléments alignés, rien qui déborde ni ne se chevauche, sur ordinateur comme sur téléphone.
+- ❌ Vérifier que le nouveau filtre fonctionne, sans voir qu'il décale ce qui l'entoure.
+
 ### ✅ On se met à la place de l'utilisateur dans ses situations difficiles
 
 *Pour protéger la confiance là où elle se perd vite.*
@@ -130,7 +142,7 @@ défaut détecté tard demande un point de contrôle. Aucun secret ni donnée r�
 
 ## Visuel
 
-> **Avant d'ajouter un point :** Qui ? → Que voit-il ? → Que perd-il si c'est faux ? → Où le constate-t-on ? → Qui d'autre est touché ?
+> **Avant d'ajouter un point :** Qui ? → Que voit-il ? → Le lit-il sans effort ? → Que perd-il si c'est faux ? → Où le constate-t-on ? → Qui d'autre est touché ?
 
 > **Un scénario terminé :** définition + spec + sélecteurs + déroulé proposé + doc → un commit
 
