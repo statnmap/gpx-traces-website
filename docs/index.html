@@ -165,7 +165,9 @@ The documentation is generated using JSDoc.</p>
 </ol>
 <h2>GitHub Actions and Deployment</h2>
 <p>The repository is configured to use GitHub Actions to build and deploy the website. The pre-build script is included in the build process to process the GPX files and update the JSON file whenever new GPX files are added or existing ones are modified.</p>
-<p>The static website is hosted on GitHub Pages. The repository is configured to automatically build and deploy the website using GitHub Actions whenever changes are made to the GPX files or the codebase.</p>
+<p>The static website is hosted on GitHub Pages. To limit the use of the Google Drive API, the website is <strong>only deployed on demand</strong> (see below). Pull requests and other workflows never call Google Drive: the unit tests use a mocked Drive client (<code>tests/driveMock.js</code>, serving <code>test-gpx-files/</code>) and the PR build uses <code>tests/fixtures/site-data</code>. The real Drive test folder is checked once a month by the <code>Google Drive integration (monthly)</code> workflow, which runs the tests with <code>DRIVE_LIVE=true</code>. You can do the same locally with <code>credentials.json</code> and <code>GOOGLE_DRIVE_FOLDER_ID_TEST</code> set:</p>
+<pre class="prettyprint source lang-sh"><code>DRIVE_LIVE=true npm test
+</code></pre>
 <p>To add your current GPS position on the map when using a smartphone, follow these steps:</p>
 <ol>
 <li>Open the website on your smartphone.</li>
@@ -272,18 +274,16 @@ npm run test:ui
 <pre class="prettyprint source lang-sh"><code>npm run lint
 npm run format
 </code></pre>
-<h2>GitHub Copilot Workflow Guide</h2>
-<p>This project has a standardized GitHub Copilot workflow guide that defines best practices for using AI assistance in development. The guide helps ensure consistency, quality, and thoroughness when working with Copilot.</p>
-<p>The workflow guide covers:</p>
+<h2>Working with AI agents</h2>
+<p>AI agents (Claude Code, Copilot, Codex…) read <a href="AGENTS.md"><code>AGENTS.md</code></a> automatically. It points them to two Lean standards, written for humans and agents alike:</p>
 <ul>
-<li>Analysis Phase: Problem understanding and solution planning</li>
-<li>Implementation Phase: Code writing and modification best practices</li>
-<li>Verification Phase: Testing and quality assurance procedures</li>
-<li>Finalization Phase: Documentation and preparation for commit</li>
-<li>Pre-Commit Checklist: Steps to follow before finalizing changes</li>
+<li><a href="docs/standards/technical-defect-analysis.md">Technical defect analysis</a>: bugs, CI failures, broken pipelines;</li>
+<li><a href="docs/standards/code-changes.md">Code changes</a>: fixes and new features.</li>
 </ul>
-<p>To use the guide, simply tell Copilot: &quot;Please follow our Copilot Workflow Guide when responding&quot; at the beginning of a conversation. Copilot: &quot;Please follow our Copilot Workflow Guide when responding&quot; at the beginning of a conversation.</p>
-<p>For complete details, see the <a href="docs/copilot-workflow-guide.md">Copilot Workflow Guide</a>.</p>
+<p>Each standard gives an intention, typical mistakes and checkable key points, with their why and ✅ / ❌ examples. They replace the former &quot;Copilot Workflow Guide&quot; (a long list of questions, in git history). The story behind them: <a href="https://statnmap.com/2026-11-21-training-an-ai-like-a-junior-with-a-lean-standard/">Training an AI like a junior: my Lean standard, built mistake after mistake</a>.</p>
+<h2>Testing user journeys</h2>
+<p>When developing on the project, user journeys (browsing the map on desktop and smartphone, downloading a GPX file, publishing a new trace) can be checked with a single command, from <a href="https://claude.com/claude-code">Claude Code</a>: <code>/recette-parcours</code>. It plays the journeys of the <a href="recette/README.md"><code>recette/</code></a> folder, as an end user would, and writes a report in <code>recette/outputs/reports/</code> (not versioned). To add or change a journey, follow <a href="recette/docs-agent/standard-parcours.md">the journey standard</a>.</p>
+<p>This complements the unit tests (<code>npm test</code>) and the UI smoke test (<code>npm run test:ui</code>), and may partly duplicate them on purpose.</p>
 <h2>JavaScript Transpilation</h2>
 <p>The project uses Babel for JavaScript transpilation. Babel allows the use of modern JavaScript features by converting the code into a compatible version that can run in older browsers.</p>
 <p>The Babel configuration can be found in the <code>babel.config.json</code> file.</p>
@@ -303,8 +303,8 @@ npm run format
 <p>To achieve this, the <code>simplifyCoordinates</code> function was added to the <code>scripts/process-gpx.js</code> file. This function filters coordinates based on a 10-meter distance threshold.</p>
 <p>The <code>getCoordinates</code> function in the <code>scripts/process-gpx.js</code> file was updated to use the <code>simplifyCoordinates</code> function.</p>
 <p>Unit tests were added in the <code>tests/process-gpx.test.js</code> file to verify the simplification logic.</p>
-<h2>Cron Job for Deploying Last Tagged Version</h2>
-<p>The deploy workflow publishes a release to GitHub Pages every Monday at 9:07 UTC and every Wednesday at 10:07 UTC (12:07 in France in summer, 11:07 in winter), with fresh GPX files from Google Drive. If the production audit and the tests pass, the current version is tagged (<code>vYYYY.MM.DD</code>) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed. A release can also be started manually from the Actions tab (Deploy &gt; Run workflow). Each push on <code>main</code> deploys to the <code>dev/</code> folder only.</p>
+<h2>Deploying a Release</h2>
+<p>The website is deployed only on demand, from the Actions tab (Deploy &gt; Run workflow), with fresh GPX files from Google Drive. There is no scheduled deployment and merging to <code>main</code> does not deploy. If the production audit and the tests pass, the current version is tagged (<code>vYYYY.MM.DD</code>) and deployed. Otherwise, the last stable tag is rebuilt with the fresh GPX files and deployed.</p>
 <h2>License</h2>
 <p>This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.</p></article>
     </section>
@@ -317,13 +317,13 @@ npm run format
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#drive">drive</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getCheckedValues">getCheckedValues</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getDistanceClass">getDistanceClass</a></li><li><a href="global.html#getDistanceKm">getDistanceKm</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#updateVisibility">updateVisibility</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCurrentPositionToMap">addCurrentPositionToMap</a></li><li><a href="global.html#categories">categories</a></li><li><a href="global.html#cleanGpxFilesDirectory">cleanGpxFilesDirectory</a></li><li><a href="global.html#downloadGpxFile">downloadGpxFile</a></li><li><a href="global.html#driveClient">driveClient</a></li><li><a href="global.html#ensureDataDirectoryExists">ensureDataDirectoryExists</a></li><li><a href="global.html#ensureGpxFilesDirectoryExists">ensureGpxFilesDirectoryExists</a></li><li><a href="global.html#getCategory">getCategory</a></li><li><a href="global.html#getCheckedValues">getCheckedValues</a></li><li><a href="global.html#getColor">getColor</a></li><li><a href="global.html#getCoordinates">getCoordinates</a></li><li><a href="global.html#getDistanceClass">getDistanceClass</a></li><li><a href="global.html#getDistanceKm">getDistanceKm</a></li><li><a href="global.html#getDrive">getDrive</a></li><li><a href="global.html#getWeight">getWeight</a></li><li><a href="global.html#gpxFilesDir">gpxFilesDir</a></li><li><a href="global.html#handleError">handleError</a></li><li><a href="global.html#initializeMap">initializeMap</a></li><li><a href="global.html#listGpxFiles">listGpxFiles</a></li><li><a href="global.html#processGpxFiles">processGpxFiles</a></li><li><a href="global.html#removeCurrentPositionFromMap">removeCurrentPositionFromMap</a></li><li><a href="global.html#setDriveClient">setDriveClient</a></li><li><a href="global.html#simplifyCoordinates">simplifyCoordinates</a></li><li><a href="global.html#updateVisibility">updateVisibility</a></li><li><a href="global.html#writeTracesJson">writeTracesJson</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 23 2026 21:12:22 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Nov 26 2026 07:52:16 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
