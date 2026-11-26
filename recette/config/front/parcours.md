@@ -66,9 +66,11 @@ SC-012 et SC-013 jouent sur une copie locale du site (Drive simulé), le reste s
 | SC-005 | Filtres de distance des parcours | non | après SC-004 |
 | SC-006 | Position GPS affichée puis masquée | non | — |
 | SC-009 | Filtre de catégorie au toucher | non | après SC-008 |
+| SC-014 | Fichier de traces indisponible | non | — |
+| SC-015 | Localisation refusée | non | après SC-006 |
 
-- **Cas de bord (par risque)** : droits (localisation autorisée, SC-006) · limites (classes de distance, SC-005). Non couverts à ce jour :
-  localisation refusée, fichier de traces indisponible ou invalide, distances exactement à 8 km et 10 km, trace sans distance.
+- **Cas de bord (par risque)** : droits (localisation autorisée SC-006, refusée SC-015) · indisponibilité (fichier de traces, SC-014) · limites (classes
+  de distance, SC-005). Non couverts à ce jour : fichier de traces illisible (contenu invalide), distances exactement à 8 km et 10 km, trace sans distance.
 - **Touchés en amont / aval** : le Drive et la publication des traces (P-003) — vérification croisée : faite sur un Drive simulé seulement.
 - **Produits similaires** : aucun autre site de traces dans ce dépôt — non applicable.
 
